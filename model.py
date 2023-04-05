@@ -27,12 +27,14 @@ class HopfieldNetwork(nn.Module):
         return self.W_upper + self.W_upper.t()
 
 
+    # Performs one step of the Hopfield network
     def step(self, x):
         x =  x @ self.W # (batch_size, size) @ (size, size) = (batch_size, size)
         x = self.hopfield_activation(x)
         return x
 
 
+    # Performs multiple steps of the Hopfield network
     def forward(self, x, steps=None):
         if steps is None:
             steps = self.steps
@@ -43,6 +45,8 @@ class HopfieldNetwork(nn.Module):
         return x
 
 
+    # Calculates the energy of the Hopfield network
+    # error: If True, uses alternative energy function
     def calc_energy(self, x, error=False):
         if error:
             next_x = torch.tanh(x @ self.W)
