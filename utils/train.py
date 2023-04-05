@@ -60,6 +60,7 @@ def train_denoise(
             # Add noise
             # x = noiser(x)
 
+            # train for each step
             # for _ in range(model.steps):
             #     x = model.step(x)
             #     loss = criterion(x, target)
