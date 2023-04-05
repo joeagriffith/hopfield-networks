@@ -18,7 +18,7 @@ class HopfieldNetwork(nn.Module):
 
         self.bias = nn.Parameter(torch.randn(size)) if bias else None
 
-        # self.hopfield_activation = HopfieldActivation(threshold=threshold)
+        self.hopfield_activation = HopfieldActivation(threshold=threshold)
 
 
     # Ensures symmetry
@@ -29,8 +29,7 @@ class HopfieldNetwork(nn.Module):
 
     def step(self, x):
         x =  x @ self.W # (batch_size, size) @ (size, size) = (batch_size, size)
-        # x = self.hopfield_activation(x)
-        x = torch.tanh(x - self.threshold)
+        x = self.hopfield_activation(x)
         return x
 
 
@@ -46,12 +45,12 @@ class HopfieldNetwork(nn.Module):
 
     def calc_energy(self, x, error=False):
         if error:
-            next_x = self.step(x)
+            next_x = torch.tanh(x @ self.W)
             return (x - next_x).abs().sum(dim=1)
 
-        a = (self.W * (torch.bmm(x.unsqueeze(2), x.unsqueeze(1)))).sum(dim=(1, 2))
-        b = torch.matmul(x, self.bias) if self.bias is not None else 0
-        return -0.5 * a - b
+        a = (self.W * (torch.bmm(x.unsqueeze(2), x.unsqueeze(1)))).abs().sum(dim=(1, 2))
+        b = torch.matmul(x, self.bias).abs() if self.bias is not None else 0
+        return 0.5 * a + b
 
 
 

@@ -2,7 +2,9 @@ import torch
 import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch.optim as optim
+
 from tqdm import tqdm
 from utils.extra_funcs import RandomGaussianNoise
 from utils.eval import evaluate_denoise
@@ -36,6 +38,8 @@ def train_denoise(
     
     #  For determining best model
     # best_val_loss = float("inf")
+
+    scheduler = ReduceLROnPlateau(optimiser, mode='min', min_lr=3e-9, factor=0.1, patience=0, verbose=True)
 
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False)
@@ -75,7 +79,7 @@ def train_denoise(
             #     x = x.detach()
 
             optimiser.zero_grad()
-            energy = model.calc_energy(x, error=True).mean()
+            energy = model.calc_energy(x).mean()
             energy.backward()
             optimiser.step()
             
@@ -96,6 +100,8 @@ def train_denoise(
         # train_loss.append(epoch_train_loss / len(train_loader))
         # print(train_loss)
         train_energy.append(epoch_train_energy / len(train_loader))
+
+        scheduler.step(energy)
         
         # epoch_val_loss, epoch_val_energy = evaluate_denoise(model, val_loader, criterion, device, flatten)
         # val_loss.append(epoch_val_loss)
