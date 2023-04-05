@@ -71,20 +71,19 @@ def train_denoise(
             #         energy = model.calc_energy(x).mean()
             #         energy.backward()
             #     optimiser.step()
-            #     model.zero_diagonal() # May not be necessary
 
             #     x = x.detach()
 
             optimiser.zero_grad()
-            energy = -model.calc_energy(x).mean()
+            energy = model.calc_energy(x, error=True).mean()
             energy.backward()
             optimiser.step()
-            model.zero_diagonal() # May not be necessary
             
 
             with torch.no_grad():
                 # epoch_train_loss += loss.item()
-                epoch_train_energy += model.calc_energy(x).mean().item()
+                # epoch_train_energy += model.calc_energy(x).mean().item()
+                epoch_train_energy += energy.item()
 
                 if epoch > 0:
                     loop.set_description(f"Epoch [{epoch}/{num_epochs}]")
