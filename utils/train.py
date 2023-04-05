@@ -2,7 +2,6 @@ import torch
 import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch.optim as optim
 
 from tqdm import tqdm
@@ -13,8 +12,8 @@ def train_denoise(
     model, 
     train_dataset,
     val_dataset,
-    optimiser, 
-    criterion, 
+    optimiser,
+    scheduler,
     model_name, 
     num_epochs, 
     flatten=False, 
@@ -22,6 +21,7 @@ def train_denoise(
     log_dir="logs", 
     step=0, 
     save_model=True,
+    error=False,
     batch_size=100,
     minimise='loss',
     learning_rate=3e-4,
@@ -39,7 +39,6 @@ def train_denoise(
     #  For determining best model
     # best_val_loss = float("inf")
 
-    scheduler = ReduceLROnPlateau(optimiser, mode='min', min_lr=3e-9, factor=0.1, patience=0, verbose=True)
 
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False)
@@ -79,7 +78,7 @@ def train_denoise(
             #     x = x.detach()
 
             optimiser.zero_grad()
-            energy = model.calc_energy(x).mean()
+            energy = model.calc_energy(x, error=error).mean()
             energy.backward()
             optimiser.step()
             
