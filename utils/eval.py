@@ -1,6 +1,8 @@
 import torch
 import torch.nn.functional as F
-from utils.functional import RandomGaussianNoise
+from utils.functional import RandomGaussianNoise, mask_center_row, mask_center_column
+from torch.utils.data import DataLoader
+
 
 def topk_accuracy(output, target, topk=(1,)):
     """Computes the precision@k for the specified values of k"""
@@ -63,3 +65,28 @@ def evaluate(model, data_loader, criterion, device, flatten=False):
         acc /= len(data_loader) 
 
         return loss, acc
+
+
+def reconstruct_score(model, train_dataset, batch_size, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
+    model.eval()
+    train_dataset.apply_transform()
+    train_loader = DataLoader(train_dataset, batch_size, shuffle=False)
+
+    total_loss = 0.0
+
+    for batch_idx, (images, y) in enumerate(train_loader):
+        x = images.to(device)
+        if flatten:
+            x = torch.flatten(x, start_dim=1)
+        
+        x1 = mask_center_column(x)
+        x2 = mask_center_row(x)
+        x3 = mask_center_column(x2)
+
+        y1 = model(x1)
+        y2 = model(x2)
+        y3 = model(x3)
+
+        total_loss += loss_fn(y1, x1).item() + loss_fn(y2, x2).item() + loss_fn(y3, x3).item()
+    
+    return total_loss / len(train_loader)

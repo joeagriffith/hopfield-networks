@@ -6,7 +6,7 @@ import torch.optim as optim
 
 from tqdm import tqdm
 from utils.functional import RandomGaussianNoise, mask_center_row, mask_center_column
-from utils.eval import evaluate_denoise
+from utils.eval import evaluate_denoise, reconstruct_score
 
 def untrain_grad(model, x, loss_fn=F.l1_loss):
     y = model(x)
@@ -104,7 +104,7 @@ def train_reconstruct(
 
         train_energy.append(epoch_train_energy / len(train_loader))
         if validate_every is not None and epoch % validate_every == 0:
-            train_loss.append(validate(model, train_dataset, loss_fn=F.l1_loss, flatten=flatten, device=device))
+            train_loss.append(reconstruct_score(model, train_dataset, batch_size=1, loss_fn=F.l1_loss, flatten=flatten, device=device))
 
         if scheduler is not None:
             scheduler.step(energy)
@@ -119,26 +119,3 @@ def train_reconstruct(
     return torch.tensor(train_energy), torch.tensor(train_loss), step
 
 
-def validate(model, train_dataset, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
-    model.eval()
-    train_dataset.apply_transform()
-    train_loader = DataLoader(train_dataset, 1, shuffle=False)
-
-    total_loss = 0.0
-
-    for batch_idx, (images, y) in enumerate(train_loader):
-        x = images.to(device)
-        if flatten:
-            x = torch.flatten(x, start_dim=1)
-        
-        x1 = mask_center_column(x)
-        x2 = mask_center_row(x)
-        x3 = mask_center_column(x2)
-
-        y1 = model(x1)
-        y2 = model(x2)
-        y3 = model(x3)
-
-        total_loss += loss_fn(y1, x1).item() + loss_fn(y2, x2).item() + loss_fn(y3, x3).item()
-    
-    return total_loss / len(train_loader)
