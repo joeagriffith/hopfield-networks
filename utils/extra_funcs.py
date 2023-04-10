@@ -12,38 +12,54 @@ class RandomGaussianNoise(object):
             noise = noise.to("cuda")
         return torch.clip(img + noise, min=0.0, max=1.0)
 
-# Possibly grad version
-# class HopfieldActivationGrad(torch.autograd.Function):
-#     @staticmethod
-#     def forward(ctx, x, threshold=0.0):
-#         ctx.save_for_backward(x)
-#         ctx.threshold = threshold
-#         return HopfieldActivation.apply(x, threshold)
-    
-#     @staticmethod
-#     def backward(ctx, grad_output):
-#         x, = ctx.saved_tensors
-#         threshold = ctx.threshold
-#         grad_input = grad_output.clone()
-#         grad_input[x < threshold] = 0.0
-#         return grad_input, None
 
+class FastHopfieldActivation():
+    def __init__(self, prefer:int):
+        assert prefer in [-1, 1], "prefer must be -1 or 1"
+        self.prefer = prefer
 
-class HopfieldActivation(object):
-    def __init__(self, threshold=0.0):
-        self.threshold = threshold
+    def __call__(self, x):
+        return F_fast_hopfield_activation(x, self.prefer)
+
+# convert from [0, 1] to [-1, 1]
+def binary_to_spin(x):
+    return x * 2.0 - 1.0
     
-    def __call__(self, x: torch.Tensor):
-        x = torch.clamp(x, min=self.threshold)
-        x = x - torch.ones_like(x) * self.threshold
+
+def F_fast_hopfield_activation(x: torch.Tensor, prefer:int):
+    assert prefer in [-1, 1], "prefer must be -1 or 1"
+
+    if prefer == -1:
+        x = torch.clamp(x, min=0.0)
+        x = torch.sign(x) 
+    else:
+        x = torch.clamp(x, max=0.0)
         x = torch.sign(x)
-        x = x * 2.0 - 1.0
-        return x
-
-# functional version
-def F_hopfield_activation(x: torch.Tensor, threshold=0.0):
-    x = torch.clamp(x, min=threshold)
-    x = x - torch.ones_like(x) * threshold
-    x = torch.sign(x)
-    x = x * 2.0 - 1.0
+        x += 1.0
+        
+    x = binary_to_spin(x) 
     return x
+
+
+def F_stochastic_hopfield_activation(x: torch.Tensor, temperature:float):
+    if temperature == 0.0:
+        x = torch.sign(x)
+        x = x/2.0 + 0.5
+    else:
+        x = torch.sigmoid(x / temperature)
+
+    x = torch.bernoulli(x)
+    x = binary_to_spin(x)
+    return x
+
+
+def mask_center_column(image, width=1.0):
+    image = image.clone()
+    image[:, image.shape[1] // 2 - int(image.shape[1] * width) // 2 : image.shape[1] // 2 + int(image.shape[1] * width) // 2] = -1.0
+    # image[2 * image.shape[0] // 3:, :] = -1.0
+    return image
+
+def mask_center_row(image, width=1.0):
+    image = image.clone()
+    image[image.shape[0] // 2 - int(image.shape[0] * width) // 2 : image.shape[0] // 2 + int(image.shape[0] * width) // 2, :] = -1.0
+    return image
