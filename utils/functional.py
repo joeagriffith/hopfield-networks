@@ -1,4 +1,5 @@
 import torch
+from abc import ABC, abstractmethod
 
 # ===================================== Utils =====================================
 def binary_to_spin(x):  # convert from [0, 1] to [-1, 1]
@@ -6,7 +7,12 @@ def binary_to_spin(x):  # convert from [0, 1] to [-1, 1]
 
 
 # ===================================== Activation =====================================
-class FastHopfieldActivation():
+class Activation(ABC):
+    @abstractmethod
+    def __call__(self, x, step_i):
+        pass
+
+class FastHopfieldActivation(Activation):
     def __init__(self, prefer:int):
         assert prefer in [-1, 1], "prefer must be -1 or 1"
         self.prefer = prefer
@@ -14,7 +20,7 @@ class FastHopfieldActivation():
     def __call__(self, x, _):
         return fast_hopfield_activation(x, self.prefer)
 
-class StochasticHopfieldActivation():
+class StochasticHopfieldActivation(Activation):
     def __init__(self, temperature:float):
         self.temperature = temperature
 
@@ -51,11 +57,16 @@ def stochastic_hopfield_activation(x: torch.Tensor, temperature:float, step_i:in
 
 
 # ===================================== Energy =====================================
-class LyapunovEnergy():
+class Energy(ABC):
+    @abstractmethod
+    def __call__(self, x, weight, bias):
+        pass
+
+class LyapunovEnergy(Energy):
     def __call__(self, x, weight, bias):
         return lyapunov_energy(x, weight, bias)
 
-class ErrorEnergy():
+class ErrorEnergy(Energy):
     def __init__(self, actv_fn=torch.tanh):
         self.actv_fn = actv_fn
 
