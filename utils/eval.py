@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from utils.extra_funcs import RandomGaussianNoise
+from utils.functional import RandomGaussianNoise
 
 def topk_accuracy(output, target, topk=(1,)):
     """Computes the precision@k for the specified values of k"""

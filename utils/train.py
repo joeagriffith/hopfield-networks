@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from tqdm import tqdm
-from utils.extra_funcs import RandomGaussianNoise, mask_center_row, mask_center_column
+from utils.functional import RandomGaussianNoise, mask_center_row, mask_center_column
 from utils.eval import evaluate_denoise
 
 def untrain_grad(model, x, loss_fn=F.l1_loss):

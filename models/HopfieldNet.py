@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.extra_funcs import F_fast_hopfield_activation, F_stochastic_hopfield_activation
+from utils.functional import F_fast_hopfield_activation, F_stochastic_hopfield_activation
 
 
-class HopfieldNetwork(nn.Module):
+class HopfieldNet(nn.Module):
     def __init__(self, size: int, mode='stochastic', bias=False, init_weights=True, steps=10, temperature:float=None, prefer:int=None):
-        super(HopfieldNetwork, self).__init__()
+        super(HopfieldNet, self).__init__()
         assert mode in ['stochastic', 'fast'], "mode must be 'stochastic' or 'fast'"
         if mode == 'stochastic':
             assert temperature is not None, "temperature must be specified for stochastic mode"
@@ -70,6 +70,8 @@ class HopfieldNetwork(nn.Module):
         a = (self.W * (torch.bmm(x.unsqueeze(2), x.unsqueeze(1)))).sum(dim=(1, 2))
         b = x @ self.bias if self.bias is not None else 0
         return -0.5 * a - b
+
+
 
 
 
