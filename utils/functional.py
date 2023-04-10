@@ -11,11 +11,18 @@ class FastHopfieldActivation():
         assert prefer in [-1, 1], "prefer must be -1 or 1"
         self.prefer = prefer
 
-    def __call__(self, x):
-        return F_fast_hopfield_activation(x, self.prefer)
+    def __call__(self, x, _):
+        return fast_hopfield_activation(x, self.prefer)
+
+class StochasticHopfieldActivation():
+    def __init__(self, temperature:float):
+        self.temperature = temperature
+
+    def __call__(self, x, step_i:int):
+        return stochastic_hopfield_activation(x, self.temperature, step_i)
     
 
-def F_fast_hopfield_activation(x: torch.Tensor, prefer:int):
+def fast_hopfield_activation(x: torch.Tensor, prefer:int):
     assert prefer in [-1, 1], "prefer must be -1 or 1"
 
     if prefer == -1:
@@ -30,7 +37,8 @@ def F_fast_hopfield_activation(x: torch.Tensor, prefer:int):
     return x
 
 
-def F_stochastic_hopfield_activation(x: torch.Tensor, temperature:float):
+def stochastic_hopfield_activation(x: torch.Tensor, temperature:float, step_i:int):
+    temperature = temperature/(2*step_i+1)
     if temperature == 0.0:
         x = torch.sign(x)
         x = x/2.0 + 0.5
@@ -43,10 +51,33 @@ def F_stochastic_hopfield_activation(x: torch.Tensor, temperature:float):
 
 
 # ===================================== Energy =====================================
-def Lyapunov_energy(x, W, b=None):
-    a = torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
-    return -0.5 * torch.sum(x * (W @ x), dim=1)
+class LyapunovEnergy():
+    def __call__(self, x, weight, bias):
+        return lyapunov_energy(x, weight, bias)
 
+class ErrorEnergy():
+    def __init__(self, actv_fn=torch.tanh):
+        self.actv_fn = actv_fn
+
+    def __call__(self, x, weight, bias):
+        return error_energy(x, weight, bias, self.actv_fn)
+
+
+def lyapunov_energy(x, weight, b=None):
+    a = weight * torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
+    b = x @ b if b is not None else 0
+    return -0.5 * a - b
+
+
+def error_energy(x, weight, b=None, actv_fn=torch.tanh):
+    next_x = x @ weight
+    if b is not None:
+        next_x += b
+    if actv_fn is not None:
+        next_x = actv_fn(next_x)
+
+    return (x - next_x)
+    
 
 # ===================================== Data Augmentation =====================================
 def mask_center_column(image, width):
