@@ -26,9 +26,9 @@ class HopfieldNet(nn.Module):
 
 
     # Performs one step of the Hopfield network
-    def step(self, x):
+    def step(self, x, step_i):
         x =  x @ self.weight_sym_upper # (batch_size, size) @ (size, size) = (batch_size, size)
-        x = self.actv_fn(x)
+        x = self.actv_fn(x, step_i)
         return x
 
 
@@ -37,8 +37,8 @@ class HopfieldNet(nn.Module):
         if steps is None:
             steps = self.steps
 
-        for _ in range(steps):
-            x = self.step(x)
+        for i in range(steps):
+            x = self.step(x, i)
 
         return x
 
