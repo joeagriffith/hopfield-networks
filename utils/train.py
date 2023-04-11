@@ -30,7 +30,7 @@ def train_denoise(
     
     best_train_loss = float("inf")
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
-    assert mode in ['default', 'energy']
+    assert mode in ['default', 'gardiner', 'energy']
 
     for epoch in range(num_epochs):
         
@@ -63,6 +63,30 @@ def train_denoise(
                         model.bias.grad = x.mean(dim=0)
                     else:
                         model.bias.grad += x.mean(dim=0)
+
+            #  May be unsuitable name 
+            elif mode == 'gardiner':
+                grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
+
+                next_x = model.step(x, 0)
+                multiplier = x * next_x # 1 if correct, -1 if incorrect
+                multiplier = (-multiplier + 1) / 2 # 0 if correct, 1 if incorrect
+                # repeat for each inp_node
+                mat_multiplier = multiplier.unsqueeze(1).repeat(1, x.shape[1], 1)
+
+                grad = grad * mat_multiplier # 0 if correct, -x*x if incorrect
+                grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1)) / 2.0
+
+                if model.weight.grad is None:
+                    model.weight.grad = grad.mean(dim=0)
+                else:
+                    model.weight.grad += grad.mean(dim=0)
+                
+                if model.bias is not None:
+                    if model.bias.grad is None:
+                        model.bias.grad = (x*multiplier).mean(dim=0)
+                    else:
+                        model.bias.grad += (x*multiplier).mean(dim=0)
 
             
             elif mode == 'energy':
