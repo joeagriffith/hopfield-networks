@@ -5,8 +5,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from tqdm import tqdm
-from utils.extra_funcs import RandomGaussianNoise
-from utils.eval import evaluate_denoise
+from utils.eval import evaluate_noise
     
 def train_denoise(
     model, 
@@ -43,7 +42,6 @@ def train_denoise(
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False)
 
-    noiser = RandomGaussianNoise(mean=0.0, std=0.1)
 
     for epoch in range(num_epochs):
         

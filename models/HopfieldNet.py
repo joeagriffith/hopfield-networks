@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.extra_funcs import HopfieldActivation
+from utils import FastHopfieldActivation
 
 
 class HopfieldNet(nn.Module):
@@ -15,7 +15,7 @@ class HopfieldNet(nn.Module):
         torch.nn.init.xavier_uniform_(self.weight)
         self.bias = nn.Parameter(torch.randn(size)) if bias else None
 
-        self.hopfield_activation = HopfieldActivation(threshold=threshold)
+        self.hopfield_activation = FastHopfieldActivation(prefer=-1)
 
 
     # Ensures symmetry
