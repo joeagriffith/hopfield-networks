@@ -22,7 +22,7 @@ class HopfieldNet(nn.Module):
         
         self.weight = nn.Parameter(torch.zeros(size, size))
         if init_weights:
-            self.weight.data = torch.nn.init.xavier_uniform_(self.weight)
+            torch.nn.init.xavier_uniform_(self.weight)
             self.weight.data = torch.triu(self.weight.data, diagonal=1) # Set all values at and below the diagonal to zero
 
         self.bias = nn.Parameter(torch.randn(size)) if bias else None
@@ -31,7 +31,7 @@ class HopfieldNet(nn.Module):
     # Completes symmetry
     @property
     def full_weight(self):
-        return self.weight.data + self.weight.data.t()
+        return torch.triu(self.weight, diagonal=1) + torch.triu(self.weight, diagonal=1).t()
 
 
     # Performs one step of the Hopfield network

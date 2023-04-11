@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
-from utils.functional import RandomGaussianNoise, mask_center_row, mask_center_column
+from utils.functional import mask_center_row, mask_center_column
+from utils import GaussianNoise
 from torch.utils.data import DataLoader
 
 
@@ -21,36 +22,12 @@ def topk_accuracy(output, target, topk=(1,)):
         return res
 
 
-def evaluate_denoise(model, data_loader, criterion, device, flatten = False, steps=None):
-    with torch.no_grad():
-        model.eval()
-        loss = 0.0
-        energy = 0.0
-        noiser = RandomGaussianNoise(mean=0.0, std=0.1)
-
-        for batch_idx, (images, y) in enumerate(data_loader):
-            x = images.to(device)
-            if flatten:
-                x = torch.flatten(x, start_dim=1)
-            target = x.clone()
-            x = noiser(x)
-
-            out = model(x, steps=steps)
-            loss += criterion(out, target).item()
-            energy += model.calc_energy(out).mean().item()
-        
-        loss /= len(data_loader)
-        energy /= len(data_loader)
-
-        return loss, energy
-
-
 def evaluate(model, data_loader, criterion, device, flatten=False):
     with torch.no_grad():
         model.eval()
         
-        loss = 0.0
-        acc = torch.zeros(3, device=device)
+        total_loss = 0.0
+        total_acc = torch.zeros(3, device=device)
 
         for batch_idx, (images, y) in enumerate(data_loader):
             x = images.to(device)
@@ -58,35 +35,60 @@ def evaluate(model, data_loader, criterion, device, flatten=False):
                 x = torch.flatten(x, start_dim=1)
             target = y.to(device)
             out = model(x)
-            loss += criterion(out, target).item()
-            acc += topk_accuracy(out, target, (1,3,5))
+            total_loss += criterion(out, target).item()
+            total_acc += topk_accuracy(out, target, (1,3,5))
         
-        loss /= len(data_loader)
-        acc /= len(data_loader) 
-
-        return loss, acc
+        return total_loss/len(data_loader), total_acc/len(data_loader)
 
 
-def reconstruct_score(model, train_dataset, batch_size, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
+def evaluate_noise(model, dataset, batch_size, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
     model.eval()
-    train_dataset.apply_transform()
-    train_loader = DataLoader(train_dataset, batch_size, shuffle=False)
+    dataset.apply_transform()
+    data_loader = DataLoader(dataset, batch_size, shuffle=False)
+
+    total_loss = 0.0
+    total_energy = 0.0
+    noiser = GaussianNoise(mean=0.0, std=0.1)
+
+    for batch_idx, (images, y) in enumerate(data_loader):
+        x = images.to(device)
+        if flatten:
+            x = torch.flatten(x, start_dim=1)
+
+        target = x.clone()
+
+        x = noiser(x)
+
+        out = model(x)
+        total_loss += loss_fn(target, out).item()
+        total_energy += model.calc_energy(out).mean().item()
+    
+
+    return total_loss/len(data_loader), total_energy/len(data_loader)
+
+
+def evaluate_mask(model, dataset, batch_size, width=0.2, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
+    model.eval()
+    dataset.apply_transform()
+    data_loader = DataLoader(dataset, batch_size, shuffle=False)
 
     total_loss = 0.0
 
-    for batch_idx, (images, y) in enumerate(train_loader):
+    for batch_idx, (images, y) in enumerate(data_loader):
         x = images.to(device)
         if flatten:
             x = torch.flatten(x, start_dim=1)
         
-        x1 = mask_center_column(x)
-        x2 = mask_center_row(x)
-        x3 = mask_center_column(x2)
+        target = x.clone()
+        
+        x1 = mask_center_column(x, width)
+        x2 = mask_center_row(x, width)
+        x3 = mask_center_column(x2, width)
 
         y1 = model(x1)
         y2 = model(x2)
         y3 = model(x3)
 
-        total_loss += loss_fn(y1, x1).item() + loss_fn(y2, x2).item() + loss_fn(y3, x3).item()
+        total_loss += (loss_fn(target, y1).item() + loss_fn(target, y2).item() + loss_fn(target, y3).item()) / 3.0
     
-    return total_loss / len(train_loader)
+    return total_loss / len(data_loader)

@@ -7,27 +7,6 @@ def binary_to_spin(x):  # convert from [0, 1] to [-1, 1]
 
 
 # ===================================== Activation =====================================
-class Activation(ABC):
-    @abstractmethod
-    def __call__(self, x, step_i):
-        pass
-
-class FastHopfieldActivation(Activation):
-    def __init__(self, prefer:int):
-        assert prefer in [-1, 1], "prefer must be -1 or 1"
-        self.prefer = prefer
-
-    def __call__(self, x, _):
-        return fast_hopfield_activation(x, self.prefer)
-
-class StochasticHopfieldActivation(Activation):
-    def __init__(self, temperature:float):
-        self.temperature = temperature
-
-    def __call__(self, x, step_i:int):
-        return stochastic_hopfield_activation(x, self.temperature, step_i)
-    
-
 def fast_hopfield_activation(x: torch.Tensor, prefer:int):
     assert prefer in [-1, 1], "prefer must be -1 or 1"
 
@@ -57,37 +36,20 @@ def stochastic_hopfield_activation(x: torch.Tensor, temperature:float, step_i:in
 
 
 # ===================================== Energy =====================================
-class Energy(ABC):
-    @abstractmethod
-    def __call__(self, x, weight, bias):
-        pass
-
-class LyapunovEnergy(Energy):
-    def __call__(self, x, weight, bias):
-        return lyapunov_energy(x, weight, bias)
-
-class ErrorEnergy(Energy):
-    def __init__(self, actv_fn=torch.tanh):
-        self.actv_fn = actv_fn
-
-    def __call__(self, x, weight, bias):
-        return error_energy(x, weight, bias, self.actv_fn)
-
-
 def lyapunov_energy(x, weight, b=None):
-    a = weight * torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
-    b = x @ b if b is not None else 0
+    a = (weight * torch.bmm(x.unsqueeze(2), x.unsqueeze(1))).sum(dim=(1, 2))
+    b = (x @ b).sum(dim=1) if b is not None else 0
     return -0.5 * a - b
 
 
-def error_energy(x, weight, b=None, actv_fn=torch.tanh):
+def error_energy(x, weight, bias=None, actv_fn=None):
     next_x = x @ weight
-    if b is not None:
-        next_x += b
+    if bias is not None:
+        next_x += bias
     if actv_fn is not None:
         next_x = actv_fn(next_x)
 
-    return (x - next_x)
+    return (x - next_x).abs().sum(dim=1)
     
 
 # ===================================== Data Augmentation =====================================
@@ -103,13 +65,9 @@ def mask_center_row(image, width):
     return image
 
 
-class RandomGaussianNoise(object):
-    def __init__(self, mean=0.0, std=0.001):
-        self.mean = mean
-        self.std = std
-    
-    def __call__(self, img):
-        noise = (torch.randn(img.shape) * self.std + self.mean)
-        if img.is_cuda:
-            noise = noise.to("cuda")
-        return torch.clip(img + noise, min=0.0, max=1.0)
+def add_gaussian_noise(image, mean=0.0, std=0.001):
+    noise = (torch.randn(image.shape) * std + mean)
+    if image.is_cuda:
+        noise = noise.to(torch.device("cuda"))
+    return torch.clip(image + noise, min=0.0, max=1.0)
+

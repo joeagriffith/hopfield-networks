@@ -5,12 +5,11 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from tqdm import tqdm
-from utils.functional import RandomGaussianNoise, mask_center_row, mask_center_column
-from utils.eval import evaluate_denoise, reconstruct_score
+from utils.eval import evaluate_noise, evaluate_mask
 
-def untrain_grad(model, x, loss_fn=F.l1_loss):
+def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.1):
     y = model(x)
-    loss = loss_fn(y, x)
+    loss = loss_fn(y, x, reduce=False).mean(dim=1)
 
     # scales loss between 0 and 1 (for -1 and 1 activations)
     if loss_fn == F.l1_loss:
@@ -18,12 +17,23 @@ def untrain_grad(model, x, loss_fn=F.l1_loss):
     elif loss_fn == F.mse_loss:
         loss = loss / 4.0
 
-    loss = 1 - (loss + 1).pow(-2.5) # loss stays high longer, from 1 to 0.
+    # loss = 1 - (loss + 1).pow(-2.5) # loss stays high longer, from 1 to 0.
 
-    grad = torch.bmm(y.unsqueeze(2), y.unsqueeze(1)) * loss
-    grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1).transpose(1, 2)) / 2.0
+    optimiser.zero_grad()
 
-    return grad
+    if mode == "default":
+        grad = torch.bmm(y.unsqueeze(2), y.unsqueeze(1)) * loss.view(-1, 1, 1) * untrain_const
+        grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1).transpose(1, 2)) / 2.0
+        if model.weight.grad is None:
+            model.weight.grad = grad.mean(dim=0)
+        else:
+            model.weight.grad += grad.mean(dim=0)
+    elif mode == "energy":
+        energy = -model.calc_energy(y) * loss * untrain_const
+        energy.mean().backward()
+
+
+
 
 def train_reconstruct(
     model, 
@@ -37,11 +47,11 @@ def train_reconstruct(
     log_dir="logs", 
     step=0, 
     save_model=True,
-    error=False,
     batch_size=100,
     learning_rate=3e-4,
     untrain_after=None,
     untrain_loss_fn=F.l1_loss,
+    untrain_const = 0.1,
     validate_every=None,
     mode="default",
     device="cpu",
@@ -67,13 +77,18 @@ def train_reconstruct(
             if flatten:
                 x = torch.flatten(x, start_dim=1)
             
-            energy = model.calc_energy(x, error=error).mean().abs()
-
             optimiser.zero_grad()
+
+            energy = model.calc_energy(x).mean()
+
             if mode == "default":
                 grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
                 grad = torch.triu(grad, diagonal=1)
-                model.W_upper.grad = grad.sum(dim=0)
+
+                if model.weight.grad is None:
+                    model.weight.grad = grad.mean(dim=0)
+                else:
+                    model.weight.grad += grad.mean(dim=0)
 
             elif mode == "iterative":
                 grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
@@ -86,25 +101,27 @@ def train_reconstruct(
                 grad = grad * multiplier # 0 if correct, x_i * x_j if incorrect
                 grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1).transpose(1, 2)) / 2
 
-                model.W_upper.grad = grad.sum(dim=0)
-
-                # Untraining, reduces spurious minima.
-                if untrain_after is not None and epoch >= untrain_after:
-                    grad = untrain_grad(model, x, F.l1_loss)
-                    model.W_upper.grad += grad.mean(dim=0)
+                if model.W_upper.grad is None:
+                    model.weight.grad = grad.mean(dim=0)
+                else:
+                    model.weight.grad += grad.mean(dim=0)
 
             elif mode == "energy":
                 energy.backward()
 
+            # Untraining, reduces spurious minima.
+            if untrain_after is not None and epoch >= untrain_after:
+                untrain_grad(x, model, optimiser, mode, F.l1_loss, untrain_const)
+
             optimiser.step()
             
-            with torch.no_grad():
-                epoch_train_energy += energy.item()
+            epoch_train_energy += energy.item()
 
 
         train_energy.append(epoch_train_energy / len(train_loader))
         if validate_every is not None and epoch % validate_every == 0:
-            train_loss.append(reconstruct_score(model, train_dataset, batch_size=1, loss_fn=F.l1_loss, flatten=flatten, device=device))
+            with torch.no_grad():
+                train_loss.append(evaluate_mask(model, train_dataset, batch_size=1, loss_fn=F.l1_loss, flatten=flatten, device=device))
 
         if scheduler is not None:
             scheduler.step(energy)
