@@ -93,15 +93,15 @@ def train_reconstruct(
             elif mode == "iterative":
                 grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
 
-                next_x = model.step(x)
+                next_x = model.step(x, 0)
                 multiplier = x * next_x * -1 # 1 if incorrect, -1 if correct
                 multiplier = (multiplier + 1) / 2 # 1 if incorrect, 0 if correct
                 multiplier = multiplier.unsqueeze(2).repeat(1, 1, x.shape[1])
 
                 grad = grad * multiplier # 0 if correct, x_i * x_j if incorrect
-                grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1).transpose(1, 2)) / 2
+                grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1).transpose(1, 2)) / 2.0
 
-                if model.W_upper.grad is None:
+                if model.weight.grad is None:
                     model.weight.grad = grad.mean(dim=0)
                 else:
                     model.weight.grad += grad.mean(dim=0)
@@ -122,9 +122,8 @@ def train_reconstruct(
         if validate_every is not None and epoch % validate_every == 0:
             with torch.no_grad():
                 train_loss.append(evaluate_mask(model, train_dataset, batch_size=1, loss_fn=F.l1_loss, flatten=flatten, device=device))
-
-        if scheduler is not None:
-            scheduler.step(energy)
+                if scheduler is not None:
+                    scheduler.step(train_loss[-1])
         
         if save_model:
             torch.save(model.state_dict(), f'{model_dir}/{model_name}.pth')

@@ -38,7 +38,7 @@ def stochastic_hopfield_activation(x: torch.Tensor, temperature:float, step_i:in
 # ===================================== Energy =====================================
 def lyapunov_energy(x, weight, b=None):
     a = (weight * torch.bmm(x.unsqueeze(2), x.unsqueeze(1))).sum(dim=(1, 2))
-    b = (x @ b).sum(dim=1) if b is not None else 0
+    b = (x @ b) if b is not None else 0
     return -0.5 * a - b
 
 
