@@ -68,6 +68,13 @@ def train_denoise(
         epoch_train_energy = 0.0
 
         for batch_idx, (images, y) in loop:
+            if epoch > 0:
+                loop.set_description(f"Epoch [{epoch}/{num_epochs}]")
+                loop.set_postfix(
+                    train_energy = train_energy[-1],
+                    train_loss = train_loss[-1], 
+                )
+
             x = images.to(device)
             if flatten:
                 x = torch.flatten(x, start_dim=1)
@@ -127,25 +134,20 @@ def train_denoise(
             with torch.no_grad():
                 epoch_train_energy += energy.item()
 
-                if epoch > 0:
-                    loop.set_description(f"Epoch [{epoch}/{num_epochs}]")
-                    loop.set_postfix(
-                        train_energy = train_energy[-1],
-                        train_loss = train_loss[-1], 
-                    )
 
         train_energy.append(epoch_train_energy / len(train_loader))
 
-        if validate_every is not None and epoch % validate_every == 0:
-            with torch.no_grad():
-                 train_loss.append(evaluate_mask(model, train_dataset, batch_size=4, loss_fn=F.l1_loss, flatten=flatten, device=device))
-                 if scheduler is not None:
-                    scheduler.step(train_loss[-1])
+        if validate_every is not None:
+            if epoch == 0 or (epoch+1) % validate_every == 0:
+                with torch.no_grad():
+                    train_loss.append(evaluate_mask(model, train_dataset, batch_size=4, loss_fn=F.l1_loss, flatten=flatten, device=device))
+                    if scheduler is not None:
+                        scheduler.step(train_loss[-1])
             
-        if save_model:
-            if best_train_loss > train_loss[-1]:
-                torch.save(model.state_dict(), f'{model_dir}/{model_name}.pth')
-                writer.add_scalar("Training Loss", train_loss[-1], step)
+                if save_model:
+                    if best_train_loss > train_loss[-1]:
+                        torch.save(model.state_dict(), f'{model_dir}/{model_name}.pth')
+                        writer.add_scalar("Training Loss", train_loss[-1], step)
 
         step += len(train_dataset)
         writer.add_scalar("Training Energy", train_energy[-1], step)
