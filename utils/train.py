@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from tqdm import tqdm
-from utils.eval import evaluate_noise
+from utils.eval import evaluate_noise, evaluate_mask
     
 def train_denoise(
     model, 
@@ -25,20 +25,15 @@ def train_denoise(
     minimise='loss',
     learning_rate=3e-4,
     weight_decay=1e-2,
+    validate_every=None,
     device="cpu",
 ):
     writer = SummaryWriter(f"{log_dir}/{model_name}")
-    # train_loss = []
+    train_loss = []
     train_energy = []
-    # val_loss = []
-    # val_energy = []
 
     assert minimise in ['loss', 'energy'], "minimise must be either 'loss' or 'energy'"
     
-    #  For determining best model
-    # best_val_loss = float("inf")
-
-
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False)
 
@@ -49,7 +44,7 @@ def train_denoise(
         train_dataset.apply_transform()
         loop = tqdm(enumerate(train_loader), total=len(train_loader), leave=False)    
 
-        # epoch_train_loss = 0.0
+        epoch_train_loss = 0.0
         epoch_train_energy = 0.0
 
         for batch_idx, (images, y) in loop:
@@ -58,22 +53,6 @@ def train_denoise(
                 x = torch.flatten(x, start_dim=1)
             # target = x.clone()
 
-            # Add noise
-            # x = noiser(x)
-
-            # train for each step
-            # for _ in range(model.steps):
-            #     x = model.step(x)
-            #     loss = criterion(x, target)
-            #     optimiser.zero_grad()
-            #     if minimise == 'loss':
-            #         loss.backward()
-            #     elif minimise == 'energy':
-            #         energy = model.calc_energy(x).mean()
-            #         energy.backward()
-            #     optimiser.step()
-
-            #     x = x.detach()
 
             optimiser.zero_grad()
             energy = model.calc_energy(x, error=error).mean()
@@ -98,7 +77,11 @@ def train_denoise(
         # print(train_loss)
         train_energy.append(epoch_train_energy / len(train_loader))
 
-        scheduler.step(energy)
+        if validate_every is not None and epoch % validate_every == 0:
+            with torch.no_grad():
+                 train_loss.append(evaluate_mask(model, train_dataset, batch_size=4, loss_fn=F.l1_loss, flatten=flatten, device=device))
+                 if scheduler is not None:
+                    scheduler.step(train_loss[-1])
         
         # epoch_val_loss, epoch_val_energy = evaluate_denoise(model, val_loader, criterion, device, flatten)
         # val_loss.append(epoch_val_loss)
@@ -108,12 +91,12 @@ def train_denoise(
             # if best_val_loss > val_loss[-1]:
                 # best_val_loss = val_loss[-1]
                 torch.save(model.state_dict(), f'{model_dir}/{model_name}.pth')
+                writer.add_scalar("Training Loss", train_loss[-1], step)
 
         step += len(train_dataset)
-        # writer.add_scalar("Training Loss", train_loss[-1], step)
         writer.add_scalar("Training Energy", train_energy[-1], step)
         # writer.add_scalar("Validation Loss", val_loss[-1], step)
         # writer.add_scalar("Validation Energy", val_energy[-1], step)
         
     # return torch.tensor(train_loss), torch.tensor(train_energy), torch.tensor(val_loss), torch.tensor(val_energy), step
-    return torch.tensor(train_energy), step
+    return torch.tensor(train_energy), torch.tensor(train_loss), step

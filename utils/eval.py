@@ -60,11 +60,11 @@ def evaluate_noise(model, dataset, batch_size, loss_fn=F.l1_loss, flatten=False,
         x = noiser(x)
 
         out = model(x)
-        total_loss += loss_fn(target, out).item()
+        total_loss += loss_fn(target, out, reduction='sum').item()
         total_energy += model.calc_energy(out).mean().item()
     
 
-    return total_loss/len(data_loader), total_energy/len(data_loader)
+    return total_loss/len(dataset), total_energy/len(dataset)
 
 
 def evaluate_mask(model, dataset, batch_size, width=0.2, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
@@ -89,6 +89,6 @@ def evaluate_mask(model, dataset, batch_size, width=0.2, loss_fn=F.l1_loss, flat
         y2 = model(x2)
         y3 = model(x3)
 
-        total_loss += (loss_fn(target, y1).item() + loss_fn(target, y2).item() + loss_fn(target, y3).item()) / 3.0
+        total_loss += (loss_fn(target, y1, reduction='sum').item() + loss_fn(target, y2, reduction='sum').item() + loss_fn(target, y3, reduction='sum').item()) / 3.0
     
-    return total_loss / len(data_loader)
+    return total_loss / len(dataset)

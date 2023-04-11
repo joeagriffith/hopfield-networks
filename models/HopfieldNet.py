@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils import FastHopfieldActivation, Activation
+from utils import FastHopfieldActivation, Energy, Activation
 
 
 class HopfieldNet(nn.Module):
-    def __init__(self, size: int, actv_fn:Activation, bias=False, steps=10, threshold=0.0):
+    def __init__(self, size: int, energy_fn:Energy, actv_fn:Activation, bias=False, steps=10, threshold=0.0):
         super(HopfieldNet, self).__init__()
         self.size = size
         self.steps = steps
@@ -15,6 +15,7 @@ class HopfieldNet(nn.Module):
         torch.nn.init.xavier_uniform_(self.weight)
         self.bias = nn.Parameter(torch.randn(size)) if bias else None
 
+        self.energy_fn = energy_fn
         self.actv_fn = actv_fn
 
 
@@ -45,13 +46,7 @@ class HopfieldNet(nn.Module):
     # Calculates the energy of the Hopfield network
     # error: If True, uses alternative energy function
     def calc_energy(self, x, error=False):
-        if error:
-            next_x = torch.tanh(x @ self.weight_sym_upper)
-            return (x - next_x).abs().sum(dim=1)
-
-        a = (self.weight_sym_upper * (torch.bmm(x.unsqueeze(2), x.unsqueeze(1)))).abs().sum(dim=(1, 2))
-        b = torch.matmul(x, self.bias).abs() if self.bias is not None else 0
-        return 0.5 * a + b
+        return self.energy_fn(x, self.weight_sym_upper, self.bias)
 
 
 
