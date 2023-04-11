@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils import FastHopfieldActivation
+from utils import FastHopfieldActivation, Activation
 
 
 class HopfieldNet(nn.Module):
-    def __init__(self, size: int, bias=False, steps=10, threshold=0.0):
+    def __init__(self, size: int, actv_fn:Activation, bias=False, steps=10, threshold=0.0):
         super(HopfieldNet, self).__init__()
         self.size = size
         self.steps = steps
@@ -15,7 +15,7 @@ class HopfieldNet(nn.Module):
         torch.nn.init.xavier_uniform_(self.weight)
         self.bias = nn.Parameter(torch.randn(size)) if bias else None
 
-        self.hopfield_activation = FastHopfieldActivation(prefer=-1)
+        self.actv_fn = actv_fn
 
 
     # Ensures symmetry
@@ -27,7 +27,7 @@ class HopfieldNet(nn.Module):
     # Performs one step of the Hopfield network
     def step(self, x):
         x =  x @ self.weight_sym_upper # (batch_size, size) @ (size, size) = (batch_size, size)
-        x = self.hopfield_activation(x)
+        x = self.actv_fn(x)
         return x
 
 
