@@ -45,7 +45,7 @@ class HopfieldNet(nn.Module):
 
     # Calculates the energy of the Hopfield network
     # error: If True, uses alternative energy function
-    def calc_energy(self, x, error=False):
+    def calc_energy(self, x):
         return self.energy_fn(x, self.weight_sym_upper, self.bias)
 
 
