@@ -14,6 +14,7 @@ def train_denoise(
     scheduler,
     model_name, 
     num_epochs, 
+    mode='default',
     flatten=False, 
     model_dir="models",
     log_dir="logs", 
@@ -28,8 +29,8 @@ def train_denoise(
     train_energy = []
     
     best_train_loss = float("inf")
-
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
+    assert mode in ['default', 'energy']
 
     for epoch in range(num_epochs):
         
@@ -45,8 +46,28 @@ def train_denoise(
                 x = torch.flatten(x, start_dim=1)
 
             optimiser.zero_grad()
+
             energy = model.calc_energy(x).mean()
-            energy.backward()
+
+            if mode == 'default':
+                grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
+                grad = torch.triu(grad, diagonal=1)
+
+                if model.weight.grad is None:
+                    model.weight.grad = grad.mean(dim=0)
+                else:
+                    model.weight.grad += grad.mean(dim=0)
+                
+                if model.bias is not None:
+                    if model.bias.grad is None:
+                        model.bias.grad = x.mean(dim=0)
+                    else:
+                        model.bias.grad += x.mean(dim=0)
+
+            
+            elif mode == 'energy':
+                energy.backward()
+
             optimiser.step()
             
 
