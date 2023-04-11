@@ -4,9 +4,9 @@ import torch.nn.functional as F
 from utils.extra_funcs import HopfieldActivation
 
 
-class HopfieldNetwork(nn.Module):
+class HopfieldNet(nn.Module):
     def __init__(self, size: int, bias=False, steps=10, threshold=0.0):
-        super(HopfieldNetwork, self).__init__()
+        super(HopfieldNet, self).__init__()
         self.size = size
         self.steps = steps
         self.threshold = threshold
