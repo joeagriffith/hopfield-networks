@@ -7,6 +7,30 @@ import torch.optim as optim
 from tqdm import tqdm
 from utils.eval import evaluate_noise, evaluate_mask
     
+def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5):
+    y = model(x)
+    loss = loss_fn(y, x, reduce=False).mean(dim=1)
+
+    # scales loss between 0 and 1 (for -1 and 1 activations)
+    if loss_fn == F.l1_loss:
+        loss = loss / 2.0
+    elif loss_fn == F.mse_loss:
+        loss = loss / 4.0
+
+    loss = 1 - (loss + 1).pow(-2.5) # loss stays high longer, from 1 to 0.
+
+    if mode == 'default' or mode == 'gardiner':
+        grad = torch.bmm(y.unsqueeze(2), y.unsqueeze(1)) * loss.view(-1, 1, 1) * untrain_const
+        grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1).transpose(1, 2)) / 2.0
+        if model.weight.grad is None:
+            model.weight.grad = grad.mean(dim=0)
+        else:
+            model.weight.grad += grad.mean(dim=0)
+    elif mode == 'energy':
+        energy = -model.calc_energy(y) * loss * untrain_const
+        energy.mean().backward()
+
+
 def train_denoise(
     model, 
     train_dataset,
@@ -21,6 +45,9 @@ def train_denoise(
     step=0, 
     save_model=True,
     batch_size=100,
+    untrain_after=None,
+    untrain_loss_fn=F.l1_loss,
+    untrain_const=0.5,
     validate_every=None,
     device="cpu",
 ):
@@ -88,13 +115,15 @@ def train_denoise(
                     else:
                         model.bias.grad += (x*multiplier).mean(dim=0)
 
-            
             elif mode == 'energy':
                 energy.backward()
+            
+            # Untrain to reduce spurious minima
+            if untrain_after is not None and epoch > untrain_after:
+                untrain_grad(x, model, optimiser, mode, untrain_loss_fn, untrain_const)
 
             optimiser.step()
             
-
             with torch.no_grad():
                 epoch_train_energy += energy.item()
 
