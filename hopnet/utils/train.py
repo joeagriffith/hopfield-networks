@@ -6,6 +6,7 @@ import torch.optim as optim
 
 from tqdm import tqdm
 from hopnet.utils.eval import evaluate_noise, evaluate_mask
+from hopnet.models import PCHNet
     
 def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5):
     y = model(x)
@@ -57,7 +58,7 @@ def train_reconstruct(
     
     best_train_loss = float("inf")
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
-    assert mode in ['default', 'gardiner', 'energy']
+    assert mode in ['default', 'gardiner', 'energy', 'step_err']
     if save_model:
         assert eval_loss_every is not None, "eval_loss_every must be specified if save_model is True"
 
@@ -126,6 +127,21 @@ def train_reconstruct(
 
             elif mode == 'energy':
                 energy.backward()
+
+            elif mode == 'step_err':
+                assert type(model) == PCHNet, "step_err mode only works with PCHNet"
+
+                # e = torch.zeros_like(x)
+                # for i in range(model.steps):
+                #     x, e = model.step(x, e, i)
+                #     if i > 0:
+                #         e.square().mean().backward()
+                #     e = e.detach()
+                #     x = x.detach()
+                
+                x, e = model.step(x, 0)
+                e.square().mean().backward()
+
             
             # Untrain to reduce spurious minima
             if untrain_after is not None and epoch > untrain_after:
