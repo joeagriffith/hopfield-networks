@@ -5,11 +5,11 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from tqdm import tqdm
-from utils.eval import evaluate_noise, evaluate_mask
+from hopnet.utils.eval import evaluate_noise, evaluate_mask
     
 def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5):
     y = model(x)
-    loss = loss_fn(y, x, reduce=False).mean(dim=1)
+    loss = loss_fn(y, x, reduction='none').mean(dim=1)
 
     # scales loss between 0 and 1 (for -1 and 1 activations)
     if loss_fn == F.l1_loss:
@@ -31,24 +31,24 @@ def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5
         energy.mean().backward()
 
 
-def train_denoise(
+def train_reconstruct(
     model, 
     train_dataset,
     optimiser,
-    scheduler,
     model_name, 
     num_epochs, 
+    scheduler=None,
     mode='default',
     flatten=False, 
-    model_dir="models",
-    log_dir="logs", 
+    model_dir="out/weights",
+    log_dir="out/logs", 
     step=0, 
     save_model=True,
     batch_size=100,
     untrain_after=None,
     untrain_loss_fn=F.l1_loss,
     untrain_const=0.5,
-    validate_every=None,
+    eval_loss_every=None,
     device="cpu",
 ):
     writer = SummaryWriter(f"{log_dir}/{model_name}")
@@ -58,6 +58,8 @@ def train_denoise(
     best_train_loss = float("inf")
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     assert mode in ['default', 'gardiner', 'energy']
+    if save_model:
+        assert eval_loss_every is not None, "eval_loss_every must be specified if save_model is True"
 
     for epoch in range(num_epochs):
         
@@ -134,22 +136,21 @@ def train_denoise(
             with torch.no_grad():
                 epoch_train_energy += energy.item()
 
-
         train_energy.append(epoch_train_energy / len(train_loader))
 
-        if validate_every is not None:
-            if epoch == 0 or (epoch+1) % validate_every == 0:
+        if eval_loss_every is not None:
+            if epoch == 0 or (epoch+1) % eval_loss_every == 0:
                 with torch.no_grad():
                     train_loss.append(evaluate_mask(model, train_dataset, batch_size=4, loss_fn=F.l1_loss, flatten=flatten, device=device))
                     if scheduler is not None:
                         scheduler.step(train_loss[-1])
-            
-                if save_model:
-                    if best_train_loss > train_loss[-1]:
-                        torch.save(model.state_dict(), f'{model_dir}/{model_name}.pth')
-                        writer.add_scalar("Training Loss", train_loss[-1], step)
+                    if save_model:
+                        if best_train_loss > train_loss[-1]:
+                            torch.save(model.state_dict(), f'{model_dir}/{model_name}.pth')
+                            best_train_loss = train_loss[-1]
 
         step += len(train_dataset)
+        writer.add_scalar("Training Loss", train_loss[-1], step)
         writer.add_scalar("Training Energy", train_energy[-1], step)
         
     return torch.tensor(train_energy), torch.tensor(train_loss), step

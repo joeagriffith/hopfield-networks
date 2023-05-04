@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
-from utils.functional import mask_center_row, mask_center_column
-from utils import GaussianNoise
+from hopnet.utils.transforms import mask_center_row, mask_center_column
+from hopnet.utils.transforms import GaussianNoise
 from torch.utils.data import DataLoader
 
 

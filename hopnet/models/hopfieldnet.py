@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils import FastHopfieldActivation, Energy, Activation
+from hopnet.activations import Activation
+from hopnet.energies import Energy
 
 
 class HopfieldNet(nn.Module):
