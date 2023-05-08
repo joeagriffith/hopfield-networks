@@ -7,3 +7,5 @@ class Activation(ABC):
 
 from hopnet.activations.fast import FastHopfieldActivation, fast_hopfield_activation
 from hopnet.activations.stochastic import StochasticHopfieldActivation, stochastic_hopfield_activation
+from hopnet.activations.tanh import Tanh, tanh
+from hopnet.activations.identity import Identity, identity

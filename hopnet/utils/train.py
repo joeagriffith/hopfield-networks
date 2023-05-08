@@ -8,6 +8,8 @@ from tqdm import tqdm
 from hopnet.utils.eval import evaluate_noise, evaluate_mask
 from hopnet.models import PCHNet
     
+# TODO: compare to minimising reconstruction loss
+# TODO: ablation test
 def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5):
     y = model(x)
     loss = loss_fn(y, x, reduction='none').mean(dim=1)

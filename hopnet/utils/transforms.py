@@ -10,6 +10,19 @@ class GaussianNoise(object):
     def __call__(self, img):
         return add_gaussian_noise(img, self.mean, self.std)
 
+# scales input from [min, max] to [-1, 1]
+class Scale(torch.nn.Module):
+    def __init__(self, min=0.0, max=1.0):
+        super(Scale, self).__init__()
+        self.min = min
+        self.max = max
+
+    def forward(self, x):
+        return (x - self.min) / (self.max - self.min) * 2.0 - 1.0
+
+    def inverse(self, x):
+        return (x + 1.0) / 2.0 * (self.max - self.min) + self.min
+
 # ===================================== Functional =====================================
 def mask_center_column(image, width):
     image = image.clone()

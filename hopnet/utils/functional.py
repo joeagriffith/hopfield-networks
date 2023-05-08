@@ -1,7 +1,6 @@
 from tkinter import Image
 
 import numpy as np
-import torch
 from abc import ABC, abstractmethod
 
 # ===================================== Utils =====================================
