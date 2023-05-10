@@ -15,4 +15,4 @@ def error_energy(x, weight, bias=None, actv_fn=None):
     if actv_fn is not None:
         next_x = actv_fn(next_x)
 
-    return (x - next_x).square().sum(dim=1)
+    return (x - next_x).square().mean(dim=1)
