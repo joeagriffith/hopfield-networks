@@ -5,12 +5,15 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from tqdm import tqdm
-from hopnet.utils.eval import evaluate_noise, evaluate_mask, evaluate
+from hopnet.utils.eval import evaluate_mask, evaluate
 from hopnet.models import PCHNet, PCHNetV2
 from hopnet.activations import Tanh
     
-# TODO: compare to minimising reconstruction loss
-# TODO: ablation test
+
+"""
+Increases the energy at the output of the network proportionally to the reconstruction loss.
+Aims to combat the effects of spurious minima, by directly increasing their energy.
+"""
 def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5):
     y = model(x)
     loss = loss_fn(y, x, reduction='none').mean(dim=1)
@@ -21,7 +24,7 @@ def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5
     elif loss_fn == F.mse_loss:
         loss = loss / 4.0
 
-    loss = 1 - (loss + 1).pow(-2.5) # loss stays high longer, from 1 to 0.
+    loss = 1 - (loss + 1).pow(-2.5) # Pushes the loss higher for smaller values, still between 0 and 1
 
     if mode == 'default' or mode == 'gardiner':
         grad = torch.bmm(y.unsqueeze(2), y.unsqueeze(1)) * loss.view(-1, 1, 1) * untrain_const
@@ -34,6 +37,12 @@ def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5
         energy = -model.calc_energy(y) * loss * untrain_const
         energy.mean().backward()
 
+"""
+Only to be used with the HopfieldNet model. 
+This is the standard learning procedure for Hopfield Networks
+which is to take the outer product of the data with itself and averages over the dataset.
+This is a one-step method.
+"""
 def train_hopfield(
     model,
     train_loader,
@@ -62,7 +71,14 @@ def train_hopfield(
     model.weight.data = (torch.triu(weight, diagonal=1) + torch.triu(weight, diagonal=1).t()) / 2.0
     model.bias.data = bias
 
-
+"""
+This method implements many different training methods for Hopfield Networks.
+hopfield - Aims to make the train_hopfield method iterable.
+gardner - Improves upon 'hopfield' by only updating the incoming weights of incorrect neurons.
+energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.
+reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.
+PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.
+"""
 def train_iterative(
     model, 
     train_loader,
@@ -90,7 +106,7 @@ def train_iterative(
     train_energy = []
     
     best_train_loss = float("inf")
-    assert mode in ['hopfield', 'gardiner', 'energy', 'reconstruction_err', 'PCHNetV2', 'pass']
+    assert mode in ['hopfield', 'gardner', 'energy', 'reconstruction_err', 'PCHNetV2', 'pass']
     if save_model:
         assert eval_loss_every is not None, "eval_loss_every must be specified if save_model is True"
 
@@ -119,7 +135,7 @@ def train_iterative(
 
             energy = model.calc_energy(x).mean()
 
-            if mode == 'default':
+            if mode == 'hopfield':
                 grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
                 grad = torch.triu(grad, diagonal=1)
 
@@ -135,15 +151,16 @@ def train_iterative(
                         model.bias.grad += x.mean(dim=0)
 
             #  May be unsuitable name 
-            elif mode == 'gardiner':
+            elif mode == 'gardner':
                 grad = -torch.bmm(x.unsqueeze(2), x.unsqueeze(1))
 
+                # Determines which neurons are incorrect, and gives them a value of 1, and 0 otherwise.
                 next_x = model.step(x, 0)
                 is_diff = (next_x != x).float()
                 is_diff_mat = is_diff.unsqueeze(1).repeat(1, x.shape[1], 1)
 
+                # Element-wise multiplication to set incoming weights of correct neurons to 0.
                 grad = grad * is_diff_mat
-                # grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1)) / 2.0
 
                 if model.weight.grad is None:
                     model.weight.grad = grad.mean(dim=0)
@@ -158,15 +175,9 @@ def train_iterative(
 
             elif mode == 'energy':
                 energy.backward()
-                # grad = model.weight.grad
-                # grad = (torch.triu(grad, diagonal=1) + torch.tril(grad, diagonal=-1)) / 2.0
-                # model.weight.grad = grad
-                # print(model.weight.grad.sum())
 
             elif mode == 'reconstruction_err':
                 assert type(model) == PCHNet or type(model) == PCHNetV2, "step_err mode only works with PCHNet"
-                # grad_energy = model.calc_energy(x, actv_fn=Tanh(0.1))
-                # grad_energy.backward()
 
                 out, e = model.step(x, 0, actv_fn=Tanh(0.1)) # Using Tanh to allow gradients to flow through
                 loss = criterion(out, x)

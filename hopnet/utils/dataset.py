@@ -18,7 +18,9 @@ def remove_to_tensor(transform):
         transform = transforms.Compose(new_transforms)
     return transform
 
-
+"""
+Dataset class that preloades all data into memory.
+"""
 class PreloadedDataset(Dataset):
     def __init__(self, main_dir, shape, transform=None, device="cpu", shuffle=False):
         self.main_dir = main_dir

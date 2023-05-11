@@ -22,6 +22,8 @@ def topk_accuracy(output, target, topk=(1,)):
         return res
 
 
+# Returns the percentage of pixels that are different between the output and the raw input
+# Score is a mean across all noising functions
 def evaluate(model, data_loader, device, flatten=False, width=0.2):
     with torch.no_grad():
         model.eval()
@@ -49,32 +51,7 @@ def evaluate(model, data_loader, device, flatten=False, width=0.2):
         
         return total_loss/len(data_loader)
 
-
-def evaluate_noise(model, dataset, batch_size, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
-    model.eval()
-    dataset.apply_transform()
-    data_loader = DataLoader(dataset, batch_size, shuffle=False)
-
-    total_loss = 0.0
-    total_energy = 0.0
-    noiser = GaussianNoise(mean=0.0, std=0.1)
-
-    for batch_idx, (images, y) in enumerate(data_loader):
-        x = images.to(device)
-        if flatten:
-            x = torch.flatten(x, start_dim=1)
-
-        target = x.clone()
-
-        x = noiser(x)
-
-        out = model(x)
-        total_loss += loss_fn(target, out, reduction='sum').item()
-        total_energy += model.calc_energy(out).mean().item()
-
-    return total_loss/len(dataset), total_energy/len(dataset)
-
-
+# Alternative measure of loss, not scaled the same as the above and uses less noising functions
 def evaluate_mask(model, dataloader, batch_size, width=0.2, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
     model.eval()
     total_loss = 0.0

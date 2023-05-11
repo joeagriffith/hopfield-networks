@@ -1,16 +1,21 @@
 import torch
 from hopnet.activations import Activation
 from hopnet.utils.functional import binary_to_spin
+"""
+The standard Hopfield activation function. 
+Essentially function like the sign function, 
+yet the user must specify a prefered sign for when the input is 0.
+"""
 
-class FastHopfieldActivation(Activation):
+class HopfieldActivation(Activation):
     def __init__(self, prefer:int):
         assert prefer in [-1, 1], "prefer must be -1 or 1"
         self.prefer = prefer
 
     def __call__(self, x, _=None):
-        return fast_hopfield_activation(x, self.prefer)
+        return hopfield_activation(x, self.prefer)
 
-def fast_hopfield_activation(x: torch.Tensor, prefer:int):
+def hopfield_activation(x: torch.Tensor, prefer:int):
     assert prefer in [-1, 1], "prefer must be -1 or 1"
 
     if prefer == -1:

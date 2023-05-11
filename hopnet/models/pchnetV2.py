@@ -4,6 +4,13 @@ import torch.nn.functional as F
 from hopnet.activations import Activation, Tanh
 from hopnet.energies import Energy
 
+"""
+This model adds a second set of weights and biases to PCHNet, however no extra error neurons are added.
+The new weights are used to propagate the error signal in its update step. 
+This allows error neurons to affect all other neurons in the network, not just their corresponding state neurons.
+As the new weights are used after the error signal is calculated, the network cannot be trained using the 'energy' training mode.
+Instead, the 'reconstruction_err' must be used inorder to propagate gradients to all weights in the network.
+"""
 
 class PCHNetV2(nn.Module):
     def __init__(self, size: int, energy_fn:Energy, actv_fn:Activation, bias=False, steps=10, threshold=0.0, eta=1.0, mu=1.0, pred_actv_fn=torch.tanh, symmetric=True):
@@ -46,12 +53,11 @@ class PCHNetV2(nn.Module):
         if self.pred_actv_fn is not None:
             pred = self.pred_actv_fn(pred)
 
+        # Error signal is propagated through the new set of weights, though no activation function is applied as it was found to be suboptimal.
         e = x - pred
         update = e @ self.weight2
         if self.bias2 is not None:
             update += self.bias2
-        # if self.pred_actv_fn is not None:
-        #     update = self.pred_actv_fn(update)
 
         x = self.eta * x - self.mu*update
         
