@@ -5,9 +5,6 @@
 An example script is supplied, 'mnist_discrete.ipynb' which includes detailed comments for how it may be modified.
 It shows how the package may be used to remember and reconstruct binary images from the mnist dataset.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
 ## Description
 This repository is a modular package for implmenting Hopfield Networks.
 It allows for different activation functions, energy functions, network architectures and training methods.
