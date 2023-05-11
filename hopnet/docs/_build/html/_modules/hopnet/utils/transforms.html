@@ -77,8 +77,8 @@
 <span class="sd">    Applies Gaussian noise to the input image. This transform returns continuous values so it should only be used with continuous Hopfield networks which are not yet implemented.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mean (float): The mean of the Gaussian distribution.</span>
-<span class="sd">        std (float): The standard deviation of the Gaussian distribution.</span>
+<span class="sd">        |  mean (float): The mean of the Gaussian distribution.</span>
+<span class="sd">        |  std (float): The standard deviation of the Gaussian distribution.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The output tensor.</span>
@@ -95,8 +95,8 @@
 <span class="sd">    Scale the input tensor from [min, max] to [-1, 1].</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        min (float): The minimum value of the input tensor.</span>
-<span class="sd">        max (float): The maximum value of the input tensor.</span>
+<span class="sd">        |  min (float): The minimum value of the input tensor.</span>
+<span class="sd">        |  max (float): The maximum value of the input tensor.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Scale</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -133,8 +133,8 @@
 <span class="sd">    Sets the center column of width `width` to -1.0.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image (torch.Tensor): The input tensor.</span>
-<span class="sd">        width (float): The width of the center column.</span>
+<span class="sd">        |  image (torch.Tensor): The input tensor.</span>
+<span class="sd">        |  width (float): The width of the center column.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The output tensor.</span>
@@ -149,8 +149,8 @@
 <span class="sd">    Sets the center row of width `width` to -1.0.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image (torch.Tensor): The input tensor.</span>
-<span class="sd">        width (float): The width of the center row.</span>
+<span class="sd">        |  image (torch.Tensor): The input tensor.</span>
+<span class="sd">        |  width (float): The width of the center row.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The output tensor.</span>
@@ -161,13 +161,13 @@
 
 <div class="viewcode-block" id="add_gaussian_noise"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.transforms.add_gaussian_noise">[docs]</a><span class="k">def</span> <span class="nf">add_gaussian_noise</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Adds Gaussian noise to the input image.</span>
-<span class="sd">    Should only be used with continuous Hopfield networks which are not yet implemented.</span>
+<span class="sd">    |  Adds Gaussian noise to the input image.</span>
+<span class="sd">    |  Should only be used with continuous Hopfield networks which are not yet implemented.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image (torch.Tensor): The input tensor.</span>
-<span class="sd">        mean (float): The mean of the Gaussian distribution.</span>
-<span class="sd">        std (float): The standard deviation of the Gaussian distribution.</span>
+<span class="sd">        |  image (torch.Tensor): The input tensor.</span>
+<span class="sd">        |  mean (float): The mean of the Gaussian distribution.</span>
+<span class="sd">        |  std (float): The standard deviation of the Gaussian distribution.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The output tensor.</span>
@@ -179,12 +179,12 @@
 
 <div class="viewcode-block" id="add_salt_and_pepper_noise"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.transforms.add_salt_and_pepper_noise">[docs]</a><span class="k">def</span> <span class="nf">add_salt_and_pepper_noise</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.</span>
-<span class="sd">    Only works with discrete Hopfield networks. </span>
+<span class="sd">    |  Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.</span>
+<span class="sd">    |  Only works with discrete Hopfield networks. </span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image (torch.Tensor): The input tensor.</span>
-<span class="sd">        p (float): The probability of flipping a pixel.</span>
+<span class="sd">        |  image (torch.Tensor): The input tensor.</span>
+<span class="sd">        |  p (float): The probability of flipping a pixel.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The output tensor.</span>
@@ -196,12 +196,12 @@
 
 <div class="viewcode-block" id="downsample_and_upsample"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.transforms.downsample_and_upsample">[docs]</a><span class="k">def</span> <span class="nf">downsample_and_upsample</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Scales the input image down by a factor of `scale` and then back up to the original size.</span>
-<span class="sd">    Fidelity is lost in the process.</span>
+<span class="sd">    |  Scales the input image down by a factor of `scale` and then back up to the original size.</span>
+<span class="sd">    |  Fidelity is lost in the process.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image (torch.Tensor): The input tensor.</span>
-<span class="sd">        scale (int): The scale factor.</span>
+<span class="sd">        |  image (torch.Tensor): The input tensor.</span>
+<span class="sd">        |  scale (int): The scale factor.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The output tensor.</span>

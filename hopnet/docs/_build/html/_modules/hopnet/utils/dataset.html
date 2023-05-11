@@ -77,8 +77,8 @@
 
 <div class="viewcode-block" id="remove_to_tensor"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.remove_to_tensor">[docs]</a><span class="k">def</span> <span class="nf">remove_to_tensor</span><span class="p">(</span><span class="n">transform</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Removes the ToTensor transform from a torchvision.transforms.Compose object.</span>
-<span class="sd">    Useful for when you want to apply a transform to a dataset, but the data is already a tensor.</span>
+<span class="sd">    |  Removes the ToTensor transform from a torchvision.transforms.Compose object.</span>
+<span class="sd">    |  Useful for when you want to apply a transform to a dataset, but the data is already a tensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        transform (torchvision.transforms.Compose): The transform to remove the ToTensor transform from.</span>
@@ -99,15 +99,15 @@
 
 <div class="viewcode-block" id="PreloadedDataset"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.PreloadedDataset">[docs]</a><span class="k">class</span> <span class="nc">PreloadedDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Dataset class that preloades all data onto the specified device.</span>
-<span class="sd">    This prevents having to move batches of data to the device at each iteration of training.</span>
+<span class="sd">    |  Dataset class that preloades all data onto the specified device.</span>
+<span class="sd">    |  This prevents having to move batches of data to the device at each iteration of training.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        main_dir (str): The path to the directory containing the data.</span>
-<span class="sd">        shape (tuple): The shape of an example datum.</span>
-<span class="sd">        transform (torchvision.transforms.Compose): The transform to apply to the data.</span>
-<span class="sd">        device (str): The device to load the data onto.</span>
-<span class="sd">        shuffle (bool): Whether to shuffle the data.</span>
+<span class="sd">        |  main_dir (str): The path to the directory containing the data.</span>
+<span class="sd">        |  shape (tuple): The shape of an example datum.</span>
+<span class="sd">        |  transform (torchvision.transforms.Compose): The transform to apply to the data.</span>
+<span class="sd">        |  device (str): The device to load the data onto.</span>
+<span class="sd">        |  shuffle (bool): Whether to shuffle the data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_dir</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_dir</span> <span class="o">=</span> <span class="n">main_dir</span>
@@ -159,9 +159,9 @@
 <span class="sd">        Converts a dataset from torchvision.datasets to a PreloadedDataset. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dataset (torchvision.datasets): The dataset to convert.</span>
-<span class="sd">            transform (torchvision.transforms.Compose): The transform to apply to the data.</span>
-<span class="sd">            device (str): The device to load the data onto.</span>
+<span class="sd">            |  dataset (torchvision.datasets): The dataset to convert.</span>
+<span class="sd">            |  transform (torchvision.transforms.Compose): The transform to apply to the data.</span>
+<span class="sd">            |  device (str): The device to load the data onto.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PreloadedDataset: The converted dataset.</span>
@@ -197,8 +197,8 @@
 <span class="sd">        Applies a transform to the data in batches so as not to overload memory.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            device (str): The device to load the data onto.</span>
-<span class="sd">            batch_size (int): The size of each batch.</span>
+<span class="sd">            |  device (str): The device to load the data onto.</span>
+<span class="sd">            |  batch_size (int): The size of each batch.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
@@ -226,8 +226,8 @@
     
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns images which have already been transformed - unless self.transform is none</span>
-<span class="sd">        This saves us from transforming individual images, which is very slow.</span>
+<span class="sd">        |  Returns images which have already been transformed - unless self.transform is none</span>
+<span class="sd">        |  This saves us from transforming individual images, which is very slow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            idx (int): The index of the image to return.</span>
@@ -253,18 +253,18 @@
 
 <div class="viewcode-block" id="PreloadedDataset.cross_val_split_by_class"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.PreloadedDataset.cross_val_split_by_class">[docs]</a>    <span class="k">def</span> <span class="nf">cross_val_split_by_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_ratio</span><span class="p">,</span> <span class="n">val_idx</span><span class="p">,</span> <span class="n">val_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a training and validation dataset, split with an equal number of each class.</span>
-<span class="sd">        a val_idx from 0 -&gt; 1/val_ratio determines which segment of each class is used for validation.</span>
+<span class="sd">        |  Returns a training and validation dataset, split with an equal number of each class.</span>
+<span class="sd">        |  a val_idx from 0 -&gt; 1/val_ratio determines which segment of each class is used for validation.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            val_ratio (float): The ratio of validation data to training data.</span>
-<span class="sd">            val_idx (int): The index of the validation segment to use.</span>
-<span class="sd">            val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.</span>
-<span class="sd">            device (str): The device to load the data onto.</span>
+<span class="sd">            |  val_ratio (float): The ratio of validation data to training data.</span>
+<span class="sd">            |  val_idx (int): The index of the validation segment to use.</span>
+<span class="sd">            |  val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.</span>
+<span class="sd">            |  device (str): The device to load the data onto.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            PreloadedDataset: The training dataset.</span>
-<span class="sd">            PreloadedDataset: The validation dataset.</span>
+<span class="sd">            |  PreloadedDataset: The training dataset.</span>
+<span class="sd">            |  PreloadedDataset: The validation dataset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffled</span><span class="p">,</span> <span class="s2">&quot;Dataset must not be shuffled to split by class&quot;</span>
         <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">val_ratio</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>

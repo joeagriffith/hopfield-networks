@@ -7,22 +7,22 @@ from hopnet.energies import Energy
 
 class PCHNetV2(nn.Module):
     """
-    This model adds a second set of weights and biases to PCHNet, however no extra error neurons are added.
-    The new weights are used to propagate the error signal in its update step. 
-    This allows error neurons to affect all other neurons in the network, not just their corresponding state neurons.
-    As the new weights are used after the error signal is calculated, the network cannot be trained using the 'energy' training mode.
-    Instead, the 'reconstruction_err' must be used inorder to propagate gradients to all weights in the network.
+    |  This model adds a second set of weights and biases to PCHNet, however no extra error neurons are added.
+    |  The new weights are used to propagate the error signal in its update step. 
+    |  This allows error neurons to affect all other neurons in the network, not just their corresponding state neurons.
+    |  As the new weights are used after the error signal is calculated, the network cannot be trained using the 'energy' training mode.
+    |  Instead, the 'reconstruction_err' must be used inorder to propagate gradients to all weights in the network.
 
     Args:
-        size (int): The number of neurons in the network.
-        energy_fn (Energy): The energy function to use.
-        actv_fn (Activation): The activation function to use.
-        bias (bool): Whether or not to use a bias vector.
-        steps (int): The number of steps to perform when forward is called.
-        eta (float): The decay rate of the state neurons.
-        mu (float): The learning rate of the state neurons, using the error signal.
-        pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.
-        symmetric (bool): Whether or not to enforce symmetry on the weights.
+        |  size (int): The number of neurons in the network.
+        |  energy_fn (Energy): The energy function to use.
+        |  actv_fn (Activation): The activation function to use.
+        |  bias (bool): Whether or not to use a bias vector.
+        |  steps (int): The number of steps to perform when forward is called.
+        |  eta (float): The decay rate of the state neurons.
+        |  mu (float): The learning rate of the state neurons, using the error signal.
+        |  pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.
+        |  symmetric (bool): Whether or not to enforce symmetry on the weights.
     """
     def __init__(self, size: int, energy_fn:Energy, actv_fn:Activation, bias=False, steps=10, eta=1.0, mu=1.0, pred_actv_fn=torch.tanh, symmetric=True):
         super(PCHNetV2, self).__init__()
@@ -59,19 +59,19 @@ class PCHNetV2(nn.Module):
 
     def step(self, x, step_i, actv_fn=None):
         """
-        Performs a single step of the network. The network first calculates a prediction of the next state using the standard hopfield update rule.
-        This prediction is compared against the current state of the network to calculate the error signal. 
-        The error signal is then propagated through the second set of weights and biases to calculate the update to the state neurons.
-        The state neurons are then updated using the update rule using a decay rate eta and learning rate mu.
+        |  Performs a single step of the network. The network first calculates a prediction of the next state using the standard hopfield update rule.
+        |  This prediction is compared against the current state of the network to calculate the error signal. 
+        |  The error signal is then propagated through the second set of weights and biases to calculate the update to the state neurons.
+        |  The state neurons are then updated using the update rule using a decay rate eta and learning rate mu.
 
         Args:
-            x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
-            step_i (int): The current step of the network. Used in the stochastic activation function.
-            actv_fn (Activation): The activation function to use. If None, the default activation function is used.
+            |  x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
+            |  step_i (int): The current step of the network. Used in the stochastic activation function.
+            |  actv_fn (Activation): The activation function to use. If None, the default activation function is used.
 
         Returns:
-            torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).
-            torch.Tensor: The error signal of the network. A 2d tensor of shape (batch_size, size).
+            |  torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).
+            |  torch.Tensor: The error signal of the network. A 2d tensor of shape (batch_size, size).
         """
         if actv_fn is None:
             actv_fn = self.actv_fn
@@ -99,8 +99,8 @@ class PCHNetV2(nn.Module):
         Performs a forward pass of the network. The network is iterated for the specified number of steps, or the default number of steps if none is specified.
 
         Args:
-            x (torch.Tensor): The initial state of the network. Must be a 2d tensor of shape (batch_size, size).
-            steps (int): The number of steps to perform. If None, the default number of steps is used.
+            |  x (torch.Tensor): The initial state of the network. Must be a 2d tensor of shape (batch_size, size).
+            |  steps (int): The number of steps to perform. If None, the default number of steps is used.
 
         Returns:
             torch.Tensor: The final state of the network. A 2d tensor of shape (batch_size, size).
@@ -116,9 +116,9 @@ class PCHNetV2(nn.Module):
 
     def calc_energy(self, x):
         """
-        Calculates the energy of the network for the given state.
-        Two steps are performed to allow the second set of weights to be used in the calculation.
-        The energy before the network has converged should not be compared to that of PCHNet as its takes more steps to calculate the energy.
+        |  Calculates the energy of the network for the given state.
+        |  Two steps are performed to allow the second set of weights to be used in the calculation.
+        |  The energy before the network has converged should not be compared to that of PCHNet as its takes more steps to calculate the energy.
 
         Args:
             x (torch.Tensor): The state of the network. Must be a 2d tensor of shape (batch_size, size).

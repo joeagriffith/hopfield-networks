@@ -12,16 +12,16 @@ from hopnet.activations import Tanh
 
 def untrain_grad(x, model, optimiser, mode, loss_fn=F.l1_loss, untrain_const=0.5):
     """
-    Increases the energy at the output of the network proportionally to the reconstruction loss.
-    Aims to combat the effects of spurious minima, by directly increasing their energy.
+    |  Increases the energy at the output of the network proportionally to the reconstruction loss.
+    |  Aims to combat the effects of spurious minima, by directly increasing their energy.
 
     Args:
-        x (torch.Tensor): The input tensor.
-        model (torch.nn.Module): The model to evaluate.
-        optimiser (torch.optim.Optimizer): The optimiser to use.
-        mode (str): The training mode to use.
-        loss_fn (torch.nn.Module): The loss function to use.
-        untrain_const (float): The constant to multiply the gradient by.
+        |  x (torch.Tensor): The input tensor.
+        |  model (torch.nn.Module): The model to evaluate.
+        |  optimiser (torch.optim.Optimizer): The optimiser to use.
+        |  mode (str): The training mode to use.
+        |  loss_fn (torch.nn.Module): The loss function to use.
+        |  untrain_const (float): The constant to multiply the gradient by.
     """
     y = model(x)
     loss = loss_fn(y, x, reduction='none').mean(dim=1)
@@ -56,20 +56,20 @@ def train_hopfield(
     device="cpu",
 ):
     """
-    Only to be used with the HopfieldNet model. 
-    This is the standard learning procedure for Hopfield Networks
-    which is to take the outer product of the data with itself and averages over the dataset.
-    This is a one-step method.
+    |  Only to be used with the HopfieldNet model. 
+    |  This is the standard learning procedure for Hopfield Networks
+    |  which is to take the outer product of the data with itself and averages over the dataset.
+    |  This is a one-step method.
 
     Args:
-        model (torch.nn.Module): The model to train.
-        train_loader (torch.utils.data.DataLoader): The training data.
-        model_name (str): The name of the model.
-        flatten (bool): Whether to flatten the input data.
-        model_dir (str): The directory to save the model weights.
-        log_dir (str): The directory to save the logs.
-        save_model (bool): Whether to save the model weights.
-        device (str): The device to use.
+        |  model (torch.nn.Module): The model to train.
+        |  train_loader (torch.utils.data.DataLoader): The training data.
+        |  model_name (str): The name of the model.
+        |  flatten (bool): Whether to flatten the input data.
+        |  model_dir (str): The directory to save the model weights.
+        |  log_dir (str): The directory to save the logs.
+        |  save_model (bool): Whether to save the model weights.
+        |  device (str): The device to use.
     """
     weight = torch.zeros_like(model.weight)
     bias = torch.zeros_like(model.bias)
@@ -111,38 +111,38 @@ def train_iterative(
     plot=False,
 ):
     """
-    This method implements many different training methods for Hopfield Networks.
-    hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.
-    This is done by taking the outer product of the data with itself and averages over the dataset.
-    gardner - Improves upon 'hopfield' by only updating the incoming weights of incorrect neurons.
-    energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.
-    reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.
-    PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.
+    |  This method implements many different training methods for Hopfield Networks.
+    |  hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.
+    |  This is done by taking the outer product of the data with itself and averages over the dataset.
+    |  gardner - Improves upon 'hopfield' by only updating the incoming weights of incorrect neurons.
+    |  energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.
+    |  reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.
+    |  PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.
 
     Args:
-        model (torch.nn.Module): The model to train.
-        train_loader (torch.utils.data.DataLoader): The training data.
-        optimiser (torch.optim.Optimizer): The optimiser to use.
-        model_name (str): The name of the model.
-        num_epochs (int): The number of epochs to train for.
-        criterion (torch.nn.Module): The loss function to use.
-        scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.
-        mode (str): The training mode to use.
-        flatten (bool): Whether to flatten the input data.
-        model_dir (str): The directory to save the model weights.
-        log_dir (str): The directory to save the logs.
-        step (int): The current step of the training procedure.
-        save_model (bool): Whether to save the model weights.
-        untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.
-        untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.
-        eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.
-        device (str): The device to use.
-        plot (bool): Whether to plot the training loss using TensorBoard.
+        |  model (torch.nn.Module): The model to train.
+        |  train_loader (torch.utils.data.DataLoader): The training data.
+        |  optimiser (torch.optim.Optimizer): The optimiser to use.
+        |  model_name (str): The name of the model.
+        |  num_epochs (int): The number of epochs to train for.
+        |  criterion (torch.nn.Module): The loss function to use.
+        |  scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.
+        |  mode (str): The training mode to use.
+        |  flatten (bool): Whether to flatten the input data.
+        |  model_dir (str): The directory to save the model weights.
+        |  log_dir (str): The directory to save the logs.
+        |  step (int): The current step of the training procedure.
+        |  save_model (bool): Whether to save the model weights.
+        |  untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.
+        |  untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.
+        |  eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.
+        |  device (str): The device to use.
+        |  plot (bool): Whether to plot the training loss using TensorBoard.
 
     Returns:
-        train_loss (list): The training loss for each epoch.
-        train_energy (list): The training energy for each epoch.
-        step (int): The current step of the training procedure.
+        |  train_loss (list): The training loss for each epoch.
+        |  train_energy (list): The training energy for each epoch.
+        |  step (int): The current step of the training procedure.
 
     """
     if plot:

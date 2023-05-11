@@ -81,16 +81,16 @@
 
 <div class="viewcode-block" id="untrain_grad"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.train.untrain_grad">[docs]</a><span class="k">def</span> <span class="nf">untrain_grad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimiser</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">loss_fn</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">l1_loss</span><span class="p">,</span> <span class="n">untrain_const</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Increases the energy at the output of the network proportionally to the reconstruction loss.</span>
-<span class="sd">    Aims to combat the effects of spurious minima, by directly increasing their energy.</span>
+<span class="sd">    |  Increases the energy at the output of the network proportionally to the reconstruction loss.</span>
+<span class="sd">    |  Aims to combat the effects of spurious minima, by directly increasing their energy.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x (torch.Tensor): The input tensor.</span>
-<span class="sd">        model (torch.nn.Module): The model to evaluate.</span>
-<span class="sd">        optimiser (torch.optim.Optimizer): The optimiser to use.</span>
-<span class="sd">        mode (str): The training mode to use.</span>
-<span class="sd">        loss_fn (torch.nn.Module): The loss function to use.</span>
-<span class="sd">        untrain_const (float): The constant to multiply the gradient by.</span>
+<span class="sd">        |  x (torch.Tensor): The input tensor.</span>
+<span class="sd">        |  model (torch.nn.Module): The model to evaluate.</span>
+<span class="sd">        |  optimiser (torch.optim.Optimizer): The optimiser to use.</span>
+<span class="sd">        |  mode (str): The training mode to use.</span>
+<span class="sd">        |  loss_fn (torch.nn.Module): The loss function to use.</span>
+<span class="sd">        |  untrain_const (float): The constant to multiply the gradient by.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -125,20 +125,20 @@
     <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Only to be used with the HopfieldNet model. </span>
-<span class="sd">    This is the standard learning procedure for Hopfield Networks</span>
-<span class="sd">    which is to take the outer product of the data with itself and averages over the dataset.</span>
-<span class="sd">    This is a one-step method.</span>
+<span class="sd">    |  Only to be used with the HopfieldNet model. </span>
+<span class="sd">    |  This is the standard learning procedure for Hopfield Networks</span>
+<span class="sd">    |  which is to take the outer product of the data with itself and averages over the dataset.</span>
+<span class="sd">    |  This is a one-step method.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): The model to train.</span>
-<span class="sd">        train_loader (torch.utils.data.DataLoader): The training data.</span>
-<span class="sd">        model_name (str): The name of the model.</span>
-<span class="sd">        flatten (bool): Whether to flatten the input data.</span>
-<span class="sd">        model_dir (str): The directory to save the model weights.</span>
-<span class="sd">        log_dir (str): The directory to save the logs.</span>
-<span class="sd">        save_model (bool): Whether to save the model weights.</span>
-<span class="sd">        device (str): The device to use.</span>
+<span class="sd">        |  model (torch.nn.Module): The model to train.</span>
+<span class="sd">        |  train_loader (torch.utils.data.DataLoader): The training data.</span>
+<span class="sd">        |  model_name (str): The name of the model.</span>
+<span class="sd">        |  flatten (bool): Whether to flatten the input data.</span>
+<span class="sd">        |  model_dir (str): The directory to save the model weights.</span>
+<span class="sd">        |  log_dir (str): The directory to save the logs.</span>
+<span class="sd">        |  save_model (bool): Whether to save the model weights.</span>
+<span class="sd">        |  device (str): The device to use.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
     <span class="n">bias</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
@@ -180,38 +180,38 @@
     <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This method implements many different training methods for Hopfield Networks.</span>
-<span class="sd">    hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.</span>
-<span class="sd">    This is done by taking the outer product of the data with itself and averages over the dataset.</span>
-<span class="sd">    gardner - Improves upon &#39;hopfield&#39; by only updating the incoming weights of incorrect neurons.</span>
-<span class="sd">    energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.</span>
-<span class="sd">    reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.</span>
-<span class="sd">    PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.</span>
+<span class="sd">    |  This method implements many different training methods for Hopfield Networks.</span>
+<span class="sd">    |  hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.</span>
+<span class="sd">    |  This is done by taking the outer product of the data with itself and averages over the dataset.</span>
+<span class="sd">    |  gardner - Improves upon &#39;hopfield&#39; by only updating the incoming weights of incorrect neurons.</span>
+<span class="sd">    |  energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.</span>
+<span class="sd">    |  reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.</span>
+<span class="sd">    |  PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): The model to train.</span>
-<span class="sd">        train_loader (torch.utils.data.DataLoader): The training data.</span>
-<span class="sd">        optimiser (torch.optim.Optimizer): The optimiser to use.</span>
-<span class="sd">        model_name (str): The name of the model.</span>
-<span class="sd">        num_epochs (int): The number of epochs to train for.</span>
-<span class="sd">        criterion (torch.nn.Module): The loss function to use.</span>
-<span class="sd">        scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.</span>
-<span class="sd">        mode (str): The training mode to use.</span>
-<span class="sd">        flatten (bool): Whether to flatten the input data.</span>
-<span class="sd">        model_dir (str): The directory to save the model weights.</span>
-<span class="sd">        log_dir (str): The directory to save the logs.</span>
-<span class="sd">        step (int): The current step of the training procedure.</span>
-<span class="sd">        save_model (bool): Whether to save the model weights.</span>
-<span class="sd">        untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.</span>
-<span class="sd">        untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.</span>
-<span class="sd">        eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.</span>
-<span class="sd">        device (str): The device to use.</span>
-<span class="sd">        plot (bool): Whether to plot the training loss using TensorBoard.</span>
+<span class="sd">        |  model (torch.nn.Module): The model to train.</span>
+<span class="sd">        |  train_loader (torch.utils.data.DataLoader): The training data.</span>
+<span class="sd">        |  optimiser (torch.optim.Optimizer): The optimiser to use.</span>
+<span class="sd">        |  model_name (str): The name of the model.</span>
+<span class="sd">        |  num_epochs (int): The number of epochs to train for.</span>
+<span class="sd">        |  criterion (torch.nn.Module): The loss function to use.</span>
+<span class="sd">        |  scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.</span>
+<span class="sd">        |  mode (str): The training mode to use.</span>
+<span class="sd">        |  flatten (bool): Whether to flatten the input data.</span>
+<span class="sd">        |  model_dir (str): The directory to save the model weights.</span>
+<span class="sd">        |  log_dir (str): The directory to save the logs.</span>
+<span class="sd">        |  step (int): The current step of the training procedure.</span>
+<span class="sd">        |  save_model (bool): Whether to save the model weights.</span>
+<span class="sd">        |  untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.</span>
+<span class="sd">        |  untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.</span>
+<span class="sd">        |  eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.</span>
+<span class="sd">        |  device (str): The device to use.</span>
+<span class="sd">        |  plot (bool): Whether to plot the training loss using TensorBoard.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        train_loss (list): The training loss for each epoch.</span>
-<span class="sd">        train_energy (list): The training energy for each epoch.</span>
-<span class="sd">        step (int): The current step of the training procedure.</span>
+<span class="sd">        |  train_loss (list): The training loss for each epoch.</span>
+<span class="sd">        |  train_energy (list): The training energy for each epoch.</span>
+<span class="sd">        |  step (int): The current step of the training procedure.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>

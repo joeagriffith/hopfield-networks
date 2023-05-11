@@ -75,22 +75,22 @@
 
 <div class="viewcode-block" id="PCHNet"><a class="viewcode-back" href="../../../hopnet.models.html#hopnet.models.pchnet.PCHNet">[docs]</a><span class="k">class</span> <span class="nc">PCHNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Inpired by Predictive Coding, this architecture realises the error energy directly in its computation.</span>
-<span class="sd">    The model introduces error neurons which capture the systems discrepancy between the current state and the next state.</span>
-<span class="sd">    Error neurons have a one-to-one relationship with the state neurons.</span>
-<span class="sd">    As in HopfieldNet(), the weights are symmetric and there are no self connections, both of which are enforced by usage of the weight_sym_upper property.</span>
-<span class="sd">    While any activation function can be used, baring Tanh, the user is suggested to use the Error energy function.</span>
-<span class="sd">    The network cannot be trained using the train_hopfield function, and trains best using the &#39;energy&#39; or &#39;reconstruction_err&#39; training modes.</span>
+<span class="sd">    |  Inpired by Predictive Coding, this architecture realises the error energy directly in its computation.</span>
+<span class="sd">    |  The model introduces error neurons which capture the systems discrepancy between the current state and the next state.</span>
+<span class="sd">    |  Error neurons have a one-to-one relationship with the state neurons.</span>
+<span class="sd">    |  As in HopfieldNet(), the weights are symmetric and there are no self connections, both of which are enforced by usage of the weight_sym_upper property.</span>
+<span class="sd">    |  While any activation function can be used, baring Tanh, the user is suggested to use the Error energy function.</span>
+<span class="sd">    |  The network cannot be trained using the train_hopfield function, and trains best using the &#39;energy&#39; or &#39;reconstruction_err&#39; training modes.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        size (int): The number of neurons in the network.</span>
-<span class="sd">        energy_fn (Energy): The energy function to use.</span>
-<span class="sd">        actv_fn (Activation): The activation function to use.</span>
-<span class="sd">        bias (bool): Whether or not to use a bias vector.</span>
-<span class="sd">        steps (int): The number of steps to perform when forward is called.</span>
-<span class="sd">        eta (float): The decay rate of the state neurons.</span>
-<span class="sd">        mu (float): The learning rate of the state neurons, using the error signal.</span>
-<span class="sd">        pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.</span>
+<span class="sd">        |  size (int): The number of neurons in the network.</span>
+<span class="sd">        |  energy_fn (Energy): The energy function to use.</span>
+<span class="sd">        |  actv_fn (Activation): The activation function to use.</span>
+<span class="sd">        |  bias (bool): Whether or not to use a bias vector.</span>
+<span class="sd">        |  steps (int): The number of steps to perform when forward is called.</span>
+<span class="sd">        |  eta (float): The decay rate of the state neurons.</span>
+<span class="sd">        |  mu (float): The learning rate of the state neurons, using the error signal.</span>
+<span class="sd">        |  pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">energy_fn</span><span class="p">:</span><span class="n">Energy</span><span class="p">,</span> <span class="n">actv_fn</span><span class="p">:</span><span class="n">Activation</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">pred_actv_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -124,19 +124,19 @@
 
 <div class="viewcode-block" id="PCHNet.step"><a class="viewcode-back" href="../../../hopnet.models.html#hopnet.models.pchnet.PCHNet.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">step_i</span><span class="p">,</span> <span class="n">actv_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Performs one step of network. The network first calculates a prediction of the next state using the standard Hopfield update rule.</span>
-<span class="sd">        This prediction is compared against the current state of the network to calculate the error signal. </span>
-<span class="sd">        The error signal is then used to update the state of the network towards the prediction.</span>
-<span class="sd">        This update is performed using the decay rate eta and the learning rate mu.</span>
+<span class="sd">        |  Performs one step of network. The network first calculates a prediction of the next state using the standard Hopfield update rule.</span>
+<span class="sd">        |  This prediction is compared against the current state of the network to calculate the error signal. </span>
+<span class="sd">        |  The error signal is then used to update the state of the network towards the prediction.</span>
+<span class="sd">        |  This update is performed using the decay rate eta and the learning rate mu.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</span>
-<span class="sd">            step_i (int): The current step of the network, used in the stochastic activation function.</span>
-<span class="sd">            actv_fn (Activation): The activation function to use. If None, the default activation function is used.</span>
+<span class="sd">            |  x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</span>
+<span class="sd">            |  step_i (int): The current step of the network, used in the stochastic activation function.</span>
+<span class="sd">            |  actv_fn (Activation): The activation function to use. If None, the default activation function is used.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</span>
-<span class="sd">            torch.Tensor: The error tensor. A 2d tensor of shape (batch_size, size).</span>
+<span class="sd">            |  torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</span>
+<span class="sd">            |  torch.Tensor: The error tensor. A 2d tensor of shape (batch_size, size).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">actv_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">actv_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actv_fn</span>
@@ -161,8 +161,8 @@
 <span class="sd">        Performs multiple steps of the network.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</span>
-<span class="sd">            steps (int): The number of steps to perform. If None, the default number of steps is used.</span>
+<span class="sd">            |  x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</span>
+<span class="sd">            |  steps (int): The number of steps to perform. If None, the default number of steps is used.</span>
 <span class="sd">            </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</span>

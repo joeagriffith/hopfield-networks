@@ -8,8 +8,8 @@ class GaussianNoise(object):
     Applies Gaussian noise to the input image. This transform returns continuous values so it should only be used with continuous Hopfield networks which are not yet implemented.
 
     Args:
-        mean (float): The mean of the Gaussian distribution.
-        std (float): The standard deviation of the Gaussian distribution.
+        |  mean (float): The mean of the Gaussian distribution.
+        |  std (float): The standard deviation of the Gaussian distribution.
 
     Returns:
         torch.Tensor: The output tensor.
@@ -26,8 +26,8 @@ class Scale(torch.nn.Module):
     Scale the input tensor from [min, max] to [-1, 1].
 
     Args:
-        min (float): The minimum value of the input tensor.
-        max (float): The maximum value of the input tensor.
+        |  min (float): The minimum value of the input tensor.
+        |  max (float): The maximum value of the input tensor.
     """
     def __init__(self, min=0.0, max=1.0):
         super(Scale, self).__init__()
@@ -64,8 +64,8 @@ def mask_center_column(image, width):
     Sets the center column of width `width` to -1.0.
 
     Args:
-        image (torch.Tensor): The input tensor.
-        width (float): The width of the center column.
+        |  image (torch.Tensor): The input tensor.
+        |  width (float): The width of the center column.
 
     Returns:
         torch.Tensor: The output tensor.
@@ -80,8 +80,8 @@ def mask_center_row(image, width):
     Sets the center row of width `width` to -1.0.
 
     Args:
-        image (torch.Tensor): The input tensor.
-        width (float): The width of the center row.
+        |  image (torch.Tensor): The input tensor.
+        |  width (float): The width of the center row.
 
     Returns:
         torch.Tensor: The output tensor.
@@ -92,13 +92,13 @@ def mask_center_row(image, width):
 
 def add_gaussian_noise(image, mean=0.0, std=0.001):
     """
-    Adds Gaussian noise to the input image.
-    Should only be used with continuous Hopfield networks which are not yet implemented.
+    |  Adds Gaussian noise to the input image.
+    |  Should only be used with continuous Hopfield networks which are not yet implemented.
 
     Args:
-        image (torch.Tensor): The input tensor.
-        mean (float): The mean of the Gaussian distribution.
-        std (float): The standard deviation of the Gaussian distribution.
+        |  image (torch.Tensor): The input tensor.
+        |  mean (float): The mean of the Gaussian distribution.
+        |  std (float): The standard deviation of the Gaussian distribution.
 
     Returns:
         torch.Tensor: The output tensor.
@@ -110,12 +110,12 @@ def add_gaussian_noise(image, mean=0.0, std=0.001):
 
 def add_salt_and_pepper_noise(image, p=0.05):
     """
-    Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.
-    Only works with discrete Hopfield networks. 
+    |  Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.
+    |  Only works with discrete Hopfield networks. 
 
     Args:
-        image (torch.Tensor): The input tensor.
-        p (float): The probability of flipping a pixel.
+        |  image (torch.Tensor): The input tensor.
+        |  p (float): The probability of flipping a pixel.
 
     Returns:
         torch.Tensor: The output tensor.
@@ -127,12 +127,12 @@ def add_salt_and_pepper_noise(image, p=0.05):
 
 def downsample_and_upsample(image, scale=2):
     """
-    Scales the input image down by a factor of `scale` and then back up to the original size.
-    Fidelity is lost in the process.
+    |  Scales the input image down by a factor of `scale` and then back up to the original size.
+    |  Fidelity is lost in the process.
 
     Args:
-        image (torch.Tensor): The input tensor.
-        scale (int): The scale factor.
+        |  image (torch.Tensor): The input tensor.
+        |  scale (int): The scale factor.
 
     Returns:
         torch.Tensor: The output tensor.

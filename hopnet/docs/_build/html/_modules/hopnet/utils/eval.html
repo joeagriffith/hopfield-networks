@@ -79,9 +79,9 @@
 <span class="sd">    Computes the precision for the specified values of k</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        output (torch.Tensor): The output tensor.</span>
-<span class="sd">        target (torch.Tensor): The target tensor.</span>
-<span class="sd">        topk (tuple): The values of k to compute the precision for.</span>
+<span class="sd">        |  output (torch.Tensor): The output tensor.</span>
+<span class="sd">        |  target (torch.Tensor): The target tensor.</span>
+<span class="sd">        |  topk (tuple): The values of k to compute the precision for.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The precision for the specified values of k.</span>
@@ -104,21 +104,21 @@
 
 <div class="viewcode-block" id="evaluate"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.eval.evaluate">[docs]</a><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the percentage of pixels that are different between the output and the raw input&gt;</span>
-<span class="sd">    Score is a mean across 5 noising functions.</span>
-<span class="sd">    Noising functions are:</span>
-<span class="sd">    - Masking the center column</span>
-<span class="sd">    - Masking the center row</span>
-<span class="sd">    - Masking the center row and column</span>
-<span class="sd">    - Downsampling and upsampling</span>
-<span class="sd">    - Adding salt and pepper noise</span>
+<span class="sd">    |  Returns the percentage of pixels that are different between the output and the raw input&gt;</span>
+<span class="sd">    |  Score is a mean across 5 noising functions.</span>
+<span class="sd">    |  Noising functions are:</span>
+<span class="sd">    |  - Masking the center column</span>
+<span class="sd">    |  - Masking the center row</span>
+<span class="sd">    |  - Masking the center row and column</span>
+<span class="sd">    |  - Downsampling and upsampling</span>
+<span class="sd">    |  - Adding salt and pepper noise</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): The model to evaluate.</span>
-<span class="sd">        data_loader (torch.utils.data.DataLoader): The data loader to use.</span>
-<span class="sd">        device (str): The device to use.</span>
-<span class="sd">        flatten (bool): Whether or not to flatten the input.</span>
-<span class="sd">        width (float): The width of the mask to use.</span>
+<span class="sd">        |  model (torch.nn.Module): The model to evaluate.</span>
+<span class="sd">        |  data_loader (torch.utils.data.DataLoader): The data loader to use.</span>
+<span class="sd">        |  device (str): The device to use.</span>
+<span class="sd">        |  flatten (bool): Whether or not to flatten the input.</span>
+<span class="sd">        |  width (float): The width of the mask to use.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        float: The percentage of pixels that are different between the output and the raw input.</span>
@@ -152,20 +152,20 @@
 
 <div class="viewcode-block" id="evaluate_mask"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.eval.evaluate_mask">[docs]</a><span class="k">def</span> <span class="nf">evaluate_mask</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">loss_fn</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">l1_loss</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Alternative measure of loss, not scaled the same as the above and uses less noising functions.</span>
-<span class="sd">    Noising functions are:</span>
-<span class="sd">    - Masking the center column</span>
-<span class="sd">    - Masking the center row</span>
-<span class="sd">    - Masking the center row and column</span>
+<span class="sd">    |  Alternative measure of loss, not scaled the same as the above and uses less noising functions.</span>
+<span class="sd">    |  Noising functions are:</span>
+<span class="sd">    |  - Masking the center column</span>
+<span class="sd">    |  - Masking the center row</span>
+<span class="sd">    |  - Masking the center row and column</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): The model to evaluate.</span>
-<span class="sd">        dataloader (torch.utils.data.DataLoader): The data loader to use.</span>
-<span class="sd">        batch_size (int): The batch size to use.</span>
-<span class="sd">        width (float): The width of the mask to use.</span>
-<span class="sd">        loss_fn (torch.nn.Module): The loss function to use.</span>
-<span class="sd">        flatten (bool): Whether or not to flatten the input.</span>
-<span class="sd">        device (str): The device to use.</span>
+<span class="sd">        |  model (torch.nn.Module): The model to evaluate.</span>
+<span class="sd">        |  dataloader (torch.utils.data.DataLoader): The data loader to use.</span>
+<span class="sd">        |  batch_size (int): The batch size to use.</span>
+<span class="sd">        |  width (float): The width of the mask to use.</span>
+<span class="sd">        |  loss_fn (torch.nn.Module): The loss function to use.</span>
+<span class="sd">        |  flatten (bool): Whether or not to flatten the input.</span>
+<span class="sd">        |  device (str): The device to use.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        float: The loss. Not scaled the same as in evaluate().</span>

@@ -94,18 +94,23 @@
 <dt id="hopnet.models.hopfieldnet.HopfieldNet">
 <em class="property">class </em><code class="descclassname">hopnet.models.hopfieldnet.</code><code class="descname">HopfieldNet</code><span class="sig-paren">(</span><em>size: int</em>, <em>energy_fn: hopnet.energies.Energy</em>, <em>actv_fn: hopnet.activations.Activation</em>, <em>bias=False</em>, <em>steps=10</em>, <em>symmetric=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/hopfieldnet.html#HopfieldNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.hopfieldnet.HopfieldNet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
-<p>The standard Hopfield Network. Weights are symmetric and there are no self connections. This is enforced by usage of the weight_sym_upper property.
-Any of the implemented activation and energy functions can be used. Although Tanh may yield unpredictable results as doesnt return discrete values, but continuous ones.
-this is the only model where the train_hopfield function from hopnet/utils/train.py can be used effectively.
-The model trains best using the ‘energy’ training mode with the Error energy function and Stochastic Hopfield activation.</p>
+<div class="line-block">
+<div class="line">The standard Hopfield Network. Weights are symmetric and there are no self connections. This is enforced by usage of the weight_sym_upper property.</div>
+<div class="line">Any of the implemented activation and energy functions can be used. Although Tanh may yield unpredictable results as doesnt return discrete values, but continuous ones.</div>
+<div class="line">this is the only model where the train_hopfield function from hopnet/utils/train.py can be used effectively.</div>
+<div class="line">The model trains best using the ‘energy’ training mode with the Error energy function and Stochastic Hopfield activation.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>size (int): The number of neurons in the network.
-energy_fn (Energy): The energy function to use.
-actv_fn (Activation): The activation function to use.
-bias (bool): Whether or not to use a bias vector.
-steps (int): The number of steps to perform when forward is called.
-symmetric (bool): Whether or not to enforce symmetry on the weights.</dd>
+<dd><div class="first last line-block">
+<div class="line">size (int): The number of neurons in the network.</div>
+<div class="line">energy_fn (Energy): The energy function to use.</div>
+<div class="line">actv_fn (Activation): The activation function to use.</div>
+<div class="line">bias (bool): Whether or not to use a bias vector.</div>
+<div class="line">steps (int): The number of steps to perform when forward is called.</div>
+<div class="line">symmetric (bool): Whether or not to enforce symmetry on the weights.</div>
+</div>
+</dd>
 </dl>
 <dl class="method">
 <dt id="hopnet.models.hopfieldnet.HopfieldNet.calc_energy">
@@ -125,8 +130,11 @@ symmetric (bool): Whether or not to enforce symmetry on the weights.</dd>
 <dd><p>Performs multiple steps of the Hopfield network.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The initial state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
-steps (int): The number of steps to perform. If None, uses the number of steps specified in the constructor.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The initial state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</div>
+<div class="line">steps (int): The number of steps to perform. If None, uses the number of steps specified in the constructor.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The final state of the network after the specified number of steps. A 2D tensor of shape (batch_size, N).</dd>
 </dl>
@@ -138,8 +146,11 @@ steps (int): The number of steps to perform. If None, uses the number of steps s
 <dd><p>Performs one step of the Hopfield network.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
-step_i (int): The current step number. Used for stochastic activation functions.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</div>
+<div class="line">step_i (int): The current step number. Used for stochastic activation functions.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The new state of the network after one step. A 2D tensor of shape (batch_size, N).</dd>
 </dl>
@@ -164,22 +175,27 @@ step_i (int): The current step number. Used for stochastic activation functions.
 <dt id="hopnet.models.pchnet.PCHNet">
 <em class="property">class </em><code class="descclassname">hopnet.models.pchnet.</code><code class="descname">PCHNet</code><span class="sig-paren">(</span><em>size: int</em>, <em>energy_fn: hopnet.energies.Energy</em>, <em>actv_fn: hopnet.activations.Activation</em>, <em>bias=False</em>, <em>steps=10</em>, <em>eta=1.0</em>, <em>mu=1.0</em>, <em>pred_actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnet.html#PCHNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnet.PCHNet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
-<p>Inpired by Predictive Coding, this architecture realises the error energy directly in its computation.
-The model introduces error neurons which capture the systems discrepancy between the current state and the next state.
-Error neurons have a one-to-one relationship with the state neurons.
-As in HopfieldNet(), the weights are symmetric and there are no self connections, both of which are enforced by usage of the weight_sym_upper property.
-While any activation function can be used, baring Tanh, the user is suggested to use the Error energy function.
-The network cannot be trained using the train_hopfield function, and trains best using the ‘energy’ or ‘reconstruction_err’ training modes.</p>
+<div class="line-block">
+<div class="line">Inpired by Predictive Coding, this architecture realises the error energy directly in its computation.</div>
+<div class="line">The model introduces error neurons which capture the systems discrepancy between the current state and the next state.</div>
+<div class="line">Error neurons have a one-to-one relationship with the state neurons.</div>
+<div class="line">As in HopfieldNet(), the weights are symmetric and there are no self connections, both of which are enforced by usage of the weight_sym_upper property.</div>
+<div class="line">While any activation function can be used, baring Tanh, the user is suggested to use the Error energy function.</div>
+<div class="line">The network cannot be trained using the train_hopfield function, and trains best using the ‘energy’ or ‘reconstruction_err’ training modes.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>size (int): The number of neurons in the network.
-energy_fn (Energy): The energy function to use.
-actv_fn (Activation): The activation function to use.
-bias (bool): Whether or not to use a bias vector.
-steps (int): The number of steps to perform when forward is called.
-eta (float): The decay rate of the state neurons.
-mu (float): The learning rate of the state neurons, using the error signal.
-pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.</dd>
+<dd><div class="first last line-block">
+<div class="line">size (int): The number of neurons in the network.</div>
+<div class="line">energy_fn (Energy): The energy function to use.</div>
+<div class="line">actv_fn (Activation): The activation function to use.</div>
+<div class="line">bias (bool): Whether or not to use a bias vector.</div>
+<div class="line">steps (int): The number of steps to perform when forward is called.</div>
+<div class="line">eta (float): The decay rate of the state neurons.</div>
+<div class="line">mu (float): The learning rate of the state neurons, using the error signal.</div>
+<div class="line">pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.</div>
+</div>
+</dd>
 </dl>
 <dl class="method">
 <dt id="hopnet.models.pchnet.PCHNet.calc_energy">
@@ -200,8 +216,11 @@ Calculates the energy of the network.</p>
 <dd><p>Performs multiple steps of the network.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
-steps (int): The number of steps to perform. If None, the default number of steps is used.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</div>
+<div class="line">steps (int): The number of steps to perform. If None, the default number of steps is used.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</dd>
 </dl>
@@ -210,18 +229,26 @@ steps (int): The number of steps to perform. If None, the default number of step
 <dl class="method">
 <dt id="hopnet.models.pchnet.PCHNet.step">
 <code class="descname">step</code><span class="sig-paren">(</span><em>x</em>, <em>step_i</em>, <em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnet.html#PCHNet.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnet.PCHNet.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs one step of network. The network first calculates a prediction of the next state using the standard Hopfield update rule.
-This prediction is compared against the current state of the network to calculate the error signal. 
-The error signal is then used to update the state of the network towards the prediction.
-This update is performed using the decay rate eta and the learning rate mu.</p>
+<dd><div class="line-block">
+<div class="line">Performs one step of network. The network first calculates a prediction of the next state using the standard Hopfield update rule.</div>
+<div class="line">This prediction is compared against the current state of the network to calculate the error signal. </div>
+<div class="line">The error signal is then used to update the state of the network towards the prediction.</div>
+<div class="line">This update is performed using the decay rate eta and the learning rate mu.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
-step_i (int): The current step of the network, used in the stochastic activation function.
-actv_fn (Activation): The activation function to use. If None, the default activation function is used.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</div>
+<div class="line">step_i (int): The current step of the network, used in the stochastic activation function.</div>
+<div class="line">actv_fn (Activation): The activation function to use. If None, the default activation function is used.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
-<dd>torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).
-torch.Tensor: The error tensor. A 2d tensor of shape (batch_size, size).</dd>
+<dd><div class="first last line-block">
+<div class="line">torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</div>
+<div class="line">torch.Tensor: The error tensor. A 2d tensor of shape (batch_size, size).</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
@@ -244,29 +271,36 @@ torch.Tensor: The error tensor. A 2d tensor of shape (batch_size, size).</dd>
 <dt id="hopnet.models.pchnetV2.PCHNetV2">
 <em class="property">class </em><code class="descclassname">hopnet.models.pchnetV2.</code><code class="descname">PCHNetV2</code><span class="sig-paren">(</span><em>size: int</em>, <em>energy_fn: hopnet.energies.Energy</em>, <em>actv_fn: hopnet.activations.Activation</em>, <em>bias=False</em>, <em>steps=10</em>, <em>eta=1.0</em>, <em>mu=1.0</em>, <em>pred_actv_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>symmetric=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
-<p>This model adds a second set of weights and biases to PCHNet, however no extra error neurons are added.
-The new weights are used to propagate the error signal in its update step. 
-This allows error neurons to affect all other neurons in the network, not just their corresponding state neurons.
-As the new weights are used after the error signal is calculated, the network cannot be trained using the ‘energy’ training mode.
-Instead, the ‘reconstruction_err’ must be used inorder to propagate gradients to all weights in the network.</p>
+<div class="line-block">
+<div class="line">This model adds a second set of weights and biases to PCHNet, however no extra error neurons are added.</div>
+<div class="line">The new weights are used to propagate the error signal in its update step. </div>
+<div class="line">This allows error neurons to affect all other neurons in the network, not just their corresponding state neurons.</div>
+<div class="line">As the new weights are used after the error signal is calculated, the network cannot be trained using the ‘energy’ training mode.</div>
+<div class="line">Instead, the ‘reconstruction_err’ must be used inorder to propagate gradients to all weights in the network.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>size (int): The number of neurons in the network.
-energy_fn (Energy): The energy function to use.
-actv_fn (Activation): The activation function to use.
-bias (bool): Whether or not to use a bias vector.
-steps (int): The number of steps to perform when forward is called.
-eta (float): The decay rate of the state neurons.
-mu (float): The learning rate of the state neurons, using the error signal.
-pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.
-symmetric (bool): Whether or not to enforce symmetry on the weights.</dd>
+<dd><div class="first last line-block">
+<div class="line">size (int): The number of neurons in the network.</div>
+<div class="line">energy_fn (Energy): The energy function to use.</div>
+<div class="line">actv_fn (Activation): The activation function to use.</div>
+<div class="line">bias (bool): Whether or not to use a bias vector.</div>
+<div class="line">steps (int): The number of steps to perform when forward is called.</div>
+<div class="line">eta (float): The decay rate of the state neurons.</div>
+<div class="line">mu (float): The learning rate of the state neurons, using the error signal.</div>
+<div class="line">pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.</div>
+<div class="line">symmetric (bool): Whether or not to enforce symmetry on the weights.</div>
+</div>
+</dd>
 </dl>
 <dl class="method">
 <dt id="hopnet.models.pchnetV2.PCHNetV2.calc_energy">
 <code class="descname">calc_energy</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2.calc_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2.calc_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the energy of the network for the given state.
-Two steps are performed to allow the second set of weights to be used in the calculation.
-The energy before the network has converged should not be compared to that of PCHNet as its takes more steps to calculate the energy.</p>
+<dd><div class="line-block">
+<div class="line">Calculates the energy of the network for the given state.</div>
+<div class="line">Two steps are performed to allow the second set of weights to be used in the calculation.</div>
+<div class="line">The energy before the network has converged should not be compared to that of PCHNet as its takes more steps to calculate the energy.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>x (torch.Tensor): The state of the network. Must be a 2d tensor of shape (batch_size, size).</dd>
@@ -281,8 +315,11 @@ The energy before the network has converged should not be compared to that of PC
 <dd><p>Performs a forward pass of the network. The network is iterated for the specified number of steps, or the default number of steps if none is specified.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The initial state of the network. Must be a 2d tensor of shape (batch_size, size).
-steps (int): The number of steps to perform. If None, the default number of steps is used.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The initial state of the network. Must be a 2d tensor of shape (batch_size, size).</div>
+<div class="line">steps (int): The number of steps to perform. If None, the default number of steps is used.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The final state of the network. A 2d tensor of shape (batch_size, size).</dd>
 </dl>
@@ -291,18 +328,26 @@ steps (int): The number of steps to perform. If None, the default number of step
 <dl class="method">
 <dt id="hopnet.models.pchnetV2.PCHNetV2.step">
 <code class="descname">step</code><span class="sig-paren">(</span><em>x</em>, <em>step_i</em>, <em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs a single step of the network. The network first calculates a prediction of the next state using the standard hopfield update rule.
-This prediction is compared against the current state of the network to calculate the error signal. 
-The error signal is then propagated through the second set of weights and biases to calculate the update to the state neurons.
-The state neurons are then updated using the update rule using a decay rate eta and learning rate mu.</p>
+<dd><div class="line-block">
+<div class="line">Performs a single step of the network. The network first calculates a prediction of the next state using the standard hopfield update rule.</div>
+<div class="line">This prediction is compared against the current state of the network to calculate the error signal. </div>
+<div class="line">The error signal is then propagated through the second set of weights and biases to calculate the update to the state neurons.</div>
+<div class="line">The state neurons are then updated using the update rule using a decay rate eta and learning rate mu.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
-step_i (int): The current step of the network. Used in the stochastic activation function.
-actv_fn (Activation): The activation function to use. If None, the default activation function is used.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</div>
+<div class="line">step_i (int): The current step of the network. Used in the stochastic activation function.</div>
+<div class="line">actv_fn (Activation): The activation function to use. If None, the default activation function is used.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
-<dd>torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).
-torch.Tensor: The error signal of the network. A 2d tensor of shape (batch_size, size).</dd>
+<dd><div class="first last line-block">
+<div class="line">torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</div>
+<div class="line">torch.Tensor: The error signal of the network. A 2d tensor of shape (batch_size, size).</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 

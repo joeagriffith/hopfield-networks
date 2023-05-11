@@ -73,19 +73,19 @@
 
 <div class="viewcode-block" id="LyapunovEnergy"><a class="viewcode-back" href="../../../hopnet.energies.html#hopnet.energies.lyapunov.LyapunovEnergy">[docs]</a><span class="k">class</span> <span class="nc">LyapunovEnergy</span><span class="p">(</span><span class="n">Energy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This is the standard energy function used in Hopfield networks.</span>
-<span class="sd">    While not known as the Lyapunov energy, it is a Lypunov function, which is why it has this name.</span>
-<span class="sd">    This function cannot be used with the &quot;energy&quot; training mode as it is not lower bounded </span>
-<span class="sd">    and will cause the weights to explode in the negative direction.</span>
+<span class="sd">    |  This is the standard energy function used in Hopfield networks.</span>
+<span class="sd">    |  While not known as the Lyapunov energy, it is a Lypunov function, which is why it has this name.</span>
+<span class="sd">    |  This function cannot be used with the &quot;energy&quot; training mode as it is not lower bounded </span>
+<span class="sd">    |  and will cause the weights to explode in the negative direction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the energy of the network in its current state using the standard Hopfield energy function.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
-<span class="sd">            weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
-<span class="sd">            bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
+<span class="sd">            |  x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
+<span class="sd">            |  weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
+<span class="sd">            |  bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</span>
@@ -97,9 +97,9 @@
 <span class="sd">    The standard Hopfield energy function.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
-<span class="sd">        weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
-<span class="sd">        b (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
+<span class="sd">        |  x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
+<span class="sd">        |  weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
+<span class="sd">        |  b (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</span>

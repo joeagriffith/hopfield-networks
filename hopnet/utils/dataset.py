@@ -8,8 +8,8 @@ from PIL import Image
 
 def remove_to_tensor(transform):
     """
-    Removes the ToTensor transform from a torchvision.transforms.Compose object.
-    Useful for when you want to apply a transform to a dataset, but the data is already a tensor.
+    |  Removes the ToTensor transform from a torchvision.transforms.Compose object.
+    |  Useful for when you want to apply a transform to a dataset, but the data is already a tensor.
 
     Args:
         transform (torchvision.transforms.Compose): The transform to remove the ToTensor transform from.
@@ -30,15 +30,15 @@ def remove_to_tensor(transform):
 
 class PreloadedDataset(Dataset):
     """
-    Dataset class that preloades all data onto the specified device.
-    This prevents having to move batches of data to the device at each iteration of training.
+    |  Dataset class that preloades all data onto the specified device.
+    |  This prevents having to move batches of data to the device at each iteration of training.
 
     Args:
-        main_dir (str): The path to the directory containing the data.
-        shape (tuple): The shape of an example datum.
-        transform (torchvision.transforms.Compose): The transform to apply to the data.
-        device (str): The device to load the data onto.
-        shuffle (bool): Whether to shuffle the data.
+        |  main_dir (str): The path to the directory containing the data.
+        |  shape (tuple): The shape of an example datum.
+        |  transform (torchvision.transforms.Compose): The transform to apply to the data.
+        |  device (str): The device to load the data onto.
+        |  shuffle (bool): Whether to shuffle the data.
     """
     def __init__(self, main_dir, shape, transform=None, device="cpu", shuffle=False):
         self.main_dir = main_dir
@@ -90,9 +90,9 @@ class PreloadedDataset(Dataset):
         Converts a dataset from torchvision.datasets to a PreloadedDataset. 
 
         Args:
-            dataset (torchvision.datasets): The dataset to convert.
-            transform (torchvision.transforms.Compose): The transform to apply to the data.
-            device (str): The device to load the data onto.
+            |  dataset (torchvision.datasets): The dataset to convert.
+            |  transform (torchvision.transforms.Compose): The transform to apply to the data.
+            |  device (str): The device to load the data onto.
 
         Returns:
             PreloadedDataset: The converted dataset.
@@ -128,8 +128,8 @@ class PreloadedDataset(Dataset):
         Applies a transform to the data in batches so as not to overload memory.
 
         Args:
-            device (str): The device to load the data onto.
-            batch_size (int): The size of each batch.
+            |  device (str): The device to load the data onto.
+            |  batch_size (int): The size of each batch.
 
         Returns:
             None
@@ -157,8 +157,8 @@ class PreloadedDataset(Dataset):
     
     def __getitem__(self, idx):
         """
-        Returns images which have already been transformed - unless self.transform is none
-        This saves us from transforming individual images, which is very slow.
+        |  Returns images which have already been transformed - unless self.transform is none
+        |  This saves us from transforming individual images, which is very slow.
 
         Args:
             idx (int): The index of the image to return.
@@ -184,18 +184,18 @@ class PreloadedDataset(Dataset):
 
     def cross_val_split_by_class(self, val_ratio, val_idx, val_transform=None, device="cpu"):
         """
-        Returns a training and validation dataset, split with an equal number of each class.
-        a val_idx from 0 -> 1/val_ratio determines which segment of each class is used for validation.
+        |  Returns a training and validation dataset, split with an equal number of each class.
+        |  a val_idx from 0 -> 1/val_ratio determines which segment of each class is used for validation.
 
         Args:
-            val_ratio (float): The ratio of validation data to training data.
-            val_idx (int): The index of the validation segment to use.
-            val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.
-            device (str): The device to load the data onto.
+            |  val_ratio (float): The ratio of validation data to training data.
+            |  val_idx (int): The index of the validation segment to use.
+            |  val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.
+            |  device (str): The device to load the data onto.
 
         Returns:
-            PreloadedDataset: The training dataset.
-            PreloadedDataset: The validation dataset.
+            |  PreloadedDataset: The training dataset.
+            |  PreloadedDataset: The validation dataset.
         """
         assert not self.shuffled, "Dataset must not be shuffled to split by class"
         max_idx = int(1/val_ratio) - 1

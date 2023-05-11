@@ -73,10 +73,10 @@
 
 <div class="viewcode-block" id="ErrorEnergy"><a class="viewcode-back" href="../../../hopnet.energies.html#hopnet.energies.error.ErrorEnergy">[docs]</a><span class="k">class</span> <span class="nc">ErrorEnergy</span><span class="p">(</span><span class="n">Energy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Inspired by Predictive Coding, the energy function allows for the problem to be reformulated as an energy minimization problem.</span>
-<span class="sd">    As the error is squared, the energy function is convex and is lower bounded by 0.</span>
-<span class="sd">    The energy is defined as the mean squared error between the current state and the next state of the network.</span>
-<span class="sd">    The network will be stable if it is in low energy.</span>
+<span class="sd">    |  Inspired by Predictive Coding, the energy function allows for the problem to be reformulated as an energy minimization problem.</span>
+<span class="sd">    |  As the error is squared, the energy function is convex and is lower bounded by 0.</span>
+<span class="sd">    |  The energy is defined as the mean squared error between the current state and the next state of the network.</span>
+<span class="sd">    |  The network will be stable if it is in low energy.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        actv_fn (Activation): The activation function to apply to the next state of the network.</span>
@@ -86,14 +86,14 @@
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the energy of the network in its current state.</span>
-<span class="sd">        This energy is the mean squared error between the current state </span>
-<span class="sd">        and the next state of the network if it were to be updated following the standard Hopfield update rule.</span>
+<span class="sd">        |  Calculates the energy of the network in its current state.</span>
+<span class="sd">        |  This energy is the mean squared error between the current state </span>
+<span class="sd">        |  and the next state of the network if it were to be updated following the standard Hopfield update rule.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
-<span class="sd">            weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
-<span class="sd">            bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
+<span class="sd">            |  x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
+<span class="sd">            |  weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
+<span class="sd">            |  bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</span>
@@ -105,10 +105,10 @@
 <span class="sd">    The error energy function.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
-<span class="sd">        weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
-<span class="sd">        bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
-<span class="sd">        actv_fn (Activation): The activation function to apply to the next state of the network.</span>
+<span class="sd">        |  x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</span>
+<span class="sd">        |  weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</span>
+<span class="sd">        |  bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</span>
+<span class="sd">        |  actv_fn (Activation): The activation function to apply to the next state of the network.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</span>

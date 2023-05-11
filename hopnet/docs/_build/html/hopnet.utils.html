@@ -93,15 +93,20 @@
 <dt id="hopnet.utils.dataset.PreloadedDataset">
 <em class="property">class </em><code class="descclassname">hopnet.utils.dataset.</code><code class="descname">PreloadedDataset</code><span class="sig-paren">(</span><em>main_dir</em>, <em>shape</em>, <em>transform=None</em>, <em>device='cpu'</em>, <em>shuffle=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#PreloadedDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.PreloadedDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
-<p>Dataset class that preloades all data onto the specified device.
-This prevents having to move batches of data to the device at each iteration of training.</p>
+<div class="line-block">
+<div class="line">Dataset class that preloades all data onto the specified device.</div>
+<div class="line">This prevents having to move batches of data to the device at each iteration of training.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>main_dir (str): The path to the directory containing the data.
-shape (tuple): The shape of an example datum.
-transform (torchvision.transforms.Compose): The transform to apply to the data.
-device (str): The device to load the data onto.
-shuffle (bool): Whether to shuffle the data.</dd>
+<dd><div class="first last line-block">
+<div class="line">main_dir (str): The path to the directory containing the data.</div>
+<div class="line">shape (tuple): The shape of an example datum.</div>
+<div class="line">transform (torchvision.transforms.Compose): The transform to apply to the data.</div>
+<div class="line">device (str): The device to load the data onto.</div>
+<div class="line">shuffle (bool): Whether to shuffle the data.</div>
+</div>
+</dd>
 </dl>
 <dl class="method">
 <dt id="hopnet.utils.dataset.PreloadedDataset.apply_transform">
@@ -109,8 +114,11 @@ shuffle (bool): Whether to shuffle the data.</dd>
 <dd><p>Applies a transform to the data in batches so as not to overload memory.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>device (str): The device to load the data onto.
-batch_size (int): The size of each batch.</dd>
+<dd><div class="first last line-block">
+<div class="line">device (str): The device to load the data onto.</div>
+<div class="line">batch_size (int): The size of each batch.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>None</dd>
 </dl>
@@ -119,17 +127,25 @@ batch_size (int): The size of each batch.</dd>
 <dl class="method">
 <dt id="hopnet.utils.dataset.PreloadedDataset.cross_val_split_by_class">
 <code class="descname">cross_val_split_by_class</code><span class="sig-paren">(</span><em>val_ratio</em>, <em>val_idx</em>, <em>val_transform=None</em>, <em>device='cpu'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#PreloadedDataset.cross_val_split_by_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.PreloadedDataset.cross_val_split_by_class" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a training and validation dataset, split with an equal number of each class.
-a val_idx from 0 -&gt; 1/val_ratio determines which segment of each class is used for validation.</p>
+<dd><div class="line-block">
+<div class="line">Returns a training and validation dataset, split with an equal number of each class.</div>
+<div class="line">a val_idx from 0 -&gt; 1/val_ratio determines which segment of each class is used for validation.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>val_ratio (float): The ratio of validation data to training data.
-val_idx (int): The index of the validation segment to use.
-val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.
-device (str): The device to load the data onto.</dd>
+<dd><div class="first last line-block">
+<div class="line">val_ratio (float): The ratio of validation data to training data.</div>
+<div class="line">val_idx (int): The index of the validation segment to use.</div>
+<div class="line">val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.</div>
+<div class="line">device (str): The device to load the data onto.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
-<dd>PreloadedDataset: The training dataset.
-PreloadedDataset: The validation dataset.</dd>
+<dd><div class="first last line-block">
+<div class="line">PreloadedDataset: The training dataset.</div>
+<div class="line">PreloadedDataset: The validation dataset.</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
@@ -139,9 +155,12 @@ PreloadedDataset: The validation dataset.</dd>
 <dd><p>Converts a dataset from torchvision.datasets to a PreloadedDataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>dataset (torchvision.datasets): The dataset to convert.
-transform (torchvision.transforms.Compose): The transform to apply to the data.
-device (str): The device to load the data onto.</dd>
+<dd><div class="first last line-block">
+<div class="line">dataset (torchvision.datasets): The dataset to convert.</div>
+<div class="line">transform (torchvision.transforms.Compose): The transform to apply to the data.</div>
+<div class="line">device (str): The device to load the data onto.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>PreloadedDataset: The converted dataset.</dd>
 </dl>
@@ -152,8 +171,10 @@ device (str): The device to load the data onto.</dd>
 <dl class="function">
 <dt id="hopnet.utils.dataset.remove_to_tensor">
 <code class="descclassname">hopnet.utils.dataset.</code><code class="descname">remove_to_tensor</code><span class="sig-paren">(</span><em>transform</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#remove_to_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.remove_to_tensor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the ToTensor transform from a torchvision.transforms.Compose object.
-Useful for when you want to apply a transform to a dataset, but the data is already a tensor.</p>
+<dd><div class="line-block">
+<div class="line">Removes the ToTensor transform from a torchvision.transforms.Compose object.</div>
+<div class="line">Useful for when you want to apply a transform to a dataset, but the data is already a tensor.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>transform (torchvision.transforms.Compose): The transform to remove the ToTensor transform from.</dd>
@@ -168,21 +189,26 @@ Useful for when you want to apply a transform to a dataset, but the data is alre
 <dl class="function">
 <dt id="hopnet.utils.eval.evaluate">
 <code class="descclassname">hopnet.utils.eval.</code><code class="descname">evaluate</code><span class="sig-paren">(</span><em>model</em>, <em>data_loader</em>, <em>device</em>, <em>flatten=False</em>, <em>width=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/eval.html#evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.eval.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the percentage of pixels that are different between the output and the raw input&gt;
-Score is a mean across 5 noising functions.
-Noising functions are:
-- Masking the center column
-- Masking the center row
-- Masking the center row and column
-- Downsampling and upsampling
-- Adding salt and pepper noise</p>
+<dd><div class="line-block">
+<div class="line">Returns the percentage of pixels that are different between the output and the raw input&gt;</div>
+<div class="line">Score is a mean across 5 noising functions.</div>
+<div class="line">Noising functions are:</div>
+<div class="line">- Masking the center column</div>
+<div class="line">- Masking the center row</div>
+<div class="line">- Masking the center row and column</div>
+<div class="line">- Downsampling and upsampling</div>
+<div class="line">- Adding salt and pepper noise</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>model (torch.nn.Module): The model to evaluate.
-data_loader (torch.utils.data.DataLoader): The data loader to use.
-device (str): The device to use.
-flatten (bool): Whether or not to flatten the input.
-width (float): The width of the mask to use.</dd>
+<dd><div class="first last line-block">
+<div class="line">model (torch.nn.Module): The model to evaluate.</div>
+<div class="line">data_loader (torch.utils.data.DataLoader): The data loader to use.</div>
+<div class="line">device (str): The device to use.</div>
+<div class="line">flatten (bool): Whether or not to flatten the input.</div>
+<div class="line">width (float): The width of the mask to use.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>float: The percentage of pixels that are different between the output and the raw input.</dd>
 </dl>
@@ -191,20 +217,25 @@ width (float): The width of the mask to use.</dd>
 <dl class="function">
 <dt id="hopnet.utils.eval.evaluate_mask">
 <code class="descclassname">hopnet.utils.eval.</code><code class="descname">evaluate_mask</code><span class="sig-paren">(</span><em>model</em>, <em>dataloader</em>, <em>batch_size</em>, <em>width=0.2</em>, <em>loss_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>flatten=False</em>, <em>device=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/eval.html#evaluate_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.eval.evaluate_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alternative measure of loss, not scaled the same as the above and uses less noising functions.
-Noising functions are:
-- Masking the center column
-- Masking the center row
-- Masking the center row and column</p>
+<dd><div class="line-block">
+<div class="line">Alternative measure of loss, not scaled the same as the above and uses less noising functions.</div>
+<div class="line">Noising functions are:</div>
+<div class="line">- Masking the center column</div>
+<div class="line">- Masking the center row</div>
+<div class="line">- Masking the center row and column</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>model (torch.nn.Module): The model to evaluate.
-dataloader (torch.utils.data.DataLoader): The data loader to use.
-batch_size (int): The batch size to use.
-width (float): The width of the mask to use.
-loss_fn (torch.nn.Module): The loss function to use.
-flatten (bool): Whether or not to flatten the input.
-device (str): The device to use.</dd>
+<dd><div class="first last line-block">
+<div class="line">model (torch.nn.Module): The model to evaluate.</div>
+<div class="line">dataloader (torch.utils.data.DataLoader): The data loader to use.</div>
+<div class="line">batch_size (int): The batch size to use.</div>
+<div class="line">width (float): The width of the mask to use.</div>
+<div class="line">loss_fn (torch.nn.Module): The loss function to use.</div>
+<div class="line">flatten (bool): Whether or not to flatten the input.</div>
+<div class="line">device (str): The device to use.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>float: The loss. Not scaled the same as in evaluate().</dd>
 </dl>
@@ -216,9 +247,12 @@ device (str): The device to use.</dd>
 <dd><p>Computes the precision for the specified values of k</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>output (torch.Tensor): The output tensor.
-target (torch.Tensor): The target tensor.
-topk (tuple): The values of k to compute the precision for.</dd>
+<dd><div class="first last line-block">
+<div class="line">output (torch.Tensor): The output tensor.</div>
+<div class="line">target (torch.Tensor): The target tensor.</div>
+<div class="line">topk (tuple): The values of k to compute the precision for.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The precision for the specified values of k.</dd>
 </dl>
@@ -230,8 +264,10 @@ topk (tuple): The values of k to compute the precision for.</dd>
 <dl class="function">
 <dt id="hopnet.utils.functional.binary_to_spin">
 <code class="descclassname">hopnet.utils.functional.</code><code class="descname">binary_to_spin</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/functional.html#binary_to_spin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.functional.binary_to_spin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to convert tensors from binary to spin representation.
-[0, 1] -&gt; [-1, 1]</p>
+<dd><div class="line-block">
+<div class="line">Used to convert tensors from binary to spin representation.</div>
+<div class="line">[0, 1] -&gt; [-1, 1]</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>x (torch.Tensor): The input tensor.</dd>
@@ -246,73 +282,91 @@ topk (tuple): The values of k to compute the precision for.</dd>
 <dl class="function">
 <dt id="hopnet.utils.train.train_hopfield">
 <code class="descclassname">hopnet.utils.train.</code><code class="descname">train_hopfield</code><span class="sig-paren">(</span><em>model</em>, <em>train_loader</em>, <em>model_name</em>, <em>flatten=False</em>, <em>model_dir='out/weights'</em>, <em>log_dir='out/logs'</em>, <em>save_model=True</em>, <em>device='cpu'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/train.html#train_hopfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.train.train_hopfield" title="Permalink to this definition">¶</a></dt>
-<dd><p>Only to be used with the HopfieldNet model. 
-This is the standard learning procedure for Hopfield Networks
-which is to take the outer product of the data with itself and averages over the dataset.
-This is a one-step method.</p>
+<dd><div class="line-block">
+<div class="line">Only to be used with the HopfieldNet model. </div>
+<div class="line">This is the standard learning procedure for Hopfield Networks</div>
+<div class="line">which is to take the outer product of the data with itself and averages over the dataset.</div>
+<div class="line">This is a one-step method.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>model (torch.nn.Module): The model to train.
-train_loader (torch.utils.data.DataLoader): The training data.
-model_name (str): The name of the model.
-flatten (bool): Whether to flatten the input data.
-model_dir (str): The directory to save the model weights.
-log_dir (str): The directory to save the logs.
-save_model (bool): Whether to save the model weights.
-device (str): The device to use.</dd>
+<dd><div class="first last line-block">
+<div class="line">model (torch.nn.Module): The model to train.</div>
+<div class="line">train_loader (torch.utils.data.DataLoader): The training data.</div>
+<div class="line">model_name (str): The name of the model.</div>
+<div class="line">flatten (bool): Whether to flatten the input data.</div>
+<div class="line">model_dir (str): The directory to save the model weights.</div>
+<div class="line">log_dir (str): The directory to save the logs.</div>
+<div class="line">save_model (bool): Whether to save the model weights.</div>
+<div class="line">device (str): The device to use.</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="hopnet.utils.train.train_iterative">
 <code class="descclassname">hopnet.utils.train.</code><code class="descname">train_iterative</code><span class="sig-paren">(</span><em>model</em>, <em>train_loader</em>, <em>optimiser</em>, <em>model_name</em>, <em>num_epochs</em>, <em>criterion=None</em>, <em>scheduler=None</em>, <em>mode='default'</em>, <em>flatten=False</em>, <em>model_dir='out/weights'</em>, <em>log_dir='out/logs'</em>, <em>step=0</em>, <em>save_model=True</em>, <em>untrain_after=None</em>, <em>untrain_loss_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>untrain_const=0.5</em>, <em>eval_loss_every=None</em>, <em>device='cpu'</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/train.html#train_iterative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.train.train_iterative" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method implements many different training methods for Hopfield Networks.
-hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.
-This is done by taking the outer product of the data with itself and averages over the dataset.
-gardner - Improves upon ‘hopfield’ by only updating the incoming weights of incorrect neurons.
-energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.
-reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.
-PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.</p>
+<dd><div class="line-block">
+<div class="line">This method implements many different training methods for Hopfield Networks.</div>
+<div class="line">hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.</div>
+<div class="line">This is done by taking the outer product of the data with itself and averages over the dataset.</div>
+<div class="line">gardner - Improves upon ‘hopfield’ by only updating the incoming weights of incorrect neurons.</div>
+<div class="line">energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.</div>
+<div class="line">reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.</div>
+<div class="line">PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>model (torch.nn.Module): The model to train.
-train_loader (torch.utils.data.DataLoader): The training data.
-optimiser (torch.optim.Optimizer): The optimiser to use.
-model_name (str): The name of the model.
-num_epochs (int): The number of epochs to train for.
-criterion (torch.nn.Module): The loss function to use.
-scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.
-mode (str): The training mode to use.
-flatten (bool): Whether to flatten the input data.
-model_dir (str): The directory to save the model weights.
-log_dir (str): The directory to save the logs.
-step (int): The current step of the training procedure.
-save_model (bool): Whether to save the model weights.
-untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.
-untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.
-eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.
-device (str): The device to use.
-plot (bool): Whether to plot the training loss using TensorBoard.</dd>
+<dd><div class="first last line-block">
+<div class="line">model (torch.nn.Module): The model to train.</div>
+<div class="line">train_loader (torch.utils.data.DataLoader): The training data.</div>
+<div class="line">optimiser (torch.optim.Optimizer): The optimiser to use.</div>
+<div class="line">model_name (str): The name of the model.</div>
+<div class="line">num_epochs (int): The number of epochs to train for.</div>
+<div class="line">criterion (torch.nn.Module): The loss function to use.</div>
+<div class="line">scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.</div>
+<div class="line">mode (str): The training mode to use.</div>
+<div class="line">flatten (bool): Whether to flatten the input data.</div>
+<div class="line">model_dir (str): The directory to save the model weights.</div>
+<div class="line">log_dir (str): The directory to save the logs.</div>
+<div class="line">step (int): The current step of the training procedure.</div>
+<div class="line">save_model (bool): Whether to save the model weights.</div>
+<div class="line">untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.</div>
+<div class="line">untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.</div>
+<div class="line">eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.</div>
+<div class="line">device (str): The device to use.</div>
+<div class="line">plot (bool): Whether to plot the training loss using TensorBoard.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
-<dd>train_loss (list): The training loss for each epoch.
-train_energy (list): The training energy for each epoch.
-step (int): The current step of the training procedure.</dd>
+<dd><div class="first last line-block">
+<div class="line">train_loss (list): The training loss for each epoch.</div>
+<div class="line">train_energy (list): The training energy for each epoch.</div>
+<div class="line">step (int): The current step of the training procedure.</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="hopnet.utils.train.untrain_grad">
 <code class="descclassname">hopnet.utils.train.</code><code class="descname">untrain_grad</code><span class="sig-paren">(</span><em>x</em>, <em>model</em>, <em>optimiser</em>, <em>mode</em>, <em>loss_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>untrain_const=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/train.html#untrain_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.train.untrain_grad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increases the energy at the output of the network proportionally to the reconstruction loss.
-Aims to combat the effects of spurious minima, by directly increasing their energy.</p>
+<dd><div class="line-block">
+<div class="line">Increases the energy at the output of the network proportionally to the reconstruction loss.</div>
+<div class="line">Aims to combat the effects of spurious minima, by directly increasing their energy.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The input tensor.
-model (torch.nn.Module): The model to evaluate.
-optimiser (torch.optim.Optimizer): The optimiser to use.
-mode (str): The training mode to use.
-loss_fn (torch.nn.Module): The loss function to use.
-untrain_const (float): The constant to multiply the gradient by.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The input tensor.</div>
+<div class="line">model (torch.nn.Module): The model to evaluate.</div>
+<div class="line">optimiser (torch.optim.Optimizer): The optimiser to use.</div>
+<div class="line">mode (str): The training mode to use.</div>
+<div class="line">loss_fn (torch.nn.Module): The loss function to use.</div>
+<div class="line">untrain_const (float): The constant to multiply the gradient by.</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
@@ -326,8 +380,11 @@ untrain_const (float): The constant to multiply the gradient by.</dd>
 <p>Applies Gaussian noise to the input image. This transform returns continuous values so it should only be used with continuous Hopfield networks which are not yet implemented.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>mean (float): The mean of the Gaussian distribution.
-std (float): The standard deviation of the Gaussian distribution.</dd>
+<dd><div class="first last line-block">
+<div class="line">mean (float): The mean of the Gaussian distribution.</div>
+<div class="line">std (float): The standard deviation of the Gaussian distribution.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The output tensor.</dd>
 </dl>
@@ -340,8 +397,11 @@ std (float): The standard deviation of the Gaussian distribution.</dd>
 <p>Scale the input tensor from [min, max] to [-1, 1].</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>min (float): The minimum value of the input tensor.
-max (float): The maximum value of the input tensor.</dd>
+<dd><div class="first last line-block">
+<div class="line">min (float): The minimum value of the input tensor.</div>
+<div class="line">max (float): The maximum value of the input tensor.</div>
+</div>
+</dd>
 </dl>
 <dl class="method">
 <dt id="hopnet.utils.transforms.Scale.forward">
@@ -372,13 +432,18 @@ max (float): The maximum value of the input tensor.</dd>
 <dl class="function">
 <dt id="hopnet.utils.transforms.add_gaussian_noise">
 <code class="descclassname">hopnet.utils.transforms.</code><code class="descname">add_gaussian_noise</code><span class="sig-paren">(</span><em>image</em>, <em>mean=0.0</em>, <em>std=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#add_gaussian_noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.add_gaussian_noise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds Gaussian noise to the input image.
-Should only be used with continuous Hopfield networks which are not yet implemented.</p>
+<dd><div class="line-block">
+<div class="line">Adds Gaussian noise to the input image.</div>
+<div class="line">Should only be used with continuous Hopfield networks which are not yet implemented.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>image (torch.Tensor): The input tensor.
-mean (float): The mean of the Gaussian distribution.
-std (float): The standard deviation of the Gaussian distribution.</dd>
+<dd><div class="first last line-block">
+<div class="line">image (torch.Tensor): The input tensor.</div>
+<div class="line">mean (float): The mean of the Gaussian distribution.</div>
+<div class="line">std (float): The standard deviation of the Gaussian distribution.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The output tensor.</dd>
 </dl>
@@ -387,12 +452,17 @@ std (float): The standard deviation of the Gaussian distribution.</dd>
 <dl class="function">
 <dt id="hopnet.utils.transforms.add_salt_and_pepper_noise">
 <code class="descclassname">hopnet.utils.transforms.</code><code class="descname">add_salt_and_pepper_noise</code><span class="sig-paren">(</span><em>image</em>, <em>p=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#add_salt_and_pepper_noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.add_salt_and_pepper_noise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.
-Only works with discrete Hopfield networks.</p>
+<dd><div class="line-block">
+<div class="line">Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.</div>
+<div class="line">Only works with discrete Hopfield networks. </div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>image (torch.Tensor): The input tensor.
-p (float): The probability of flipping a pixel.</dd>
+<dd><div class="first last line-block">
+<div class="line">image (torch.Tensor): The input tensor.</div>
+<div class="line">p (float): The probability of flipping a pixel.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The output tensor.</dd>
 </dl>
@@ -401,12 +471,17 @@ p (float): The probability of flipping a pixel.</dd>
 <dl class="function">
 <dt id="hopnet.utils.transforms.downsample_and_upsample">
 <code class="descclassname">hopnet.utils.transforms.</code><code class="descname">downsample_and_upsample</code><span class="sig-paren">(</span><em>image</em>, <em>scale=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#downsample_and_upsample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.downsample_and_upsample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scales the input image down by a factor of <cite>scale</cite> and then back up to the original size.
-Fidelity is lost in the process.</p>
+<dd><div class="line-block">
+<div class="line">Scales the input image down by a factor of <cite>scale</cite> and then back up to the original size.</div>
+<div class="line">Fidelity is lost in the process.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>image (torch.Tensor): The input tensor.
-scale (int): The scale factor.</dd>
+<dd><div class="first last line-block">
+<div class="line">image (torch.Tensor): The input tensor.</div>
+<div class="line">scale (int): The scale factor.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The output tensor.</dd>
 </dl>
@@ -418,8 +493,11 @@ scale (int): The scale factor.</dd>
 <dd><p>Sets the center column of width <cite>width</cite> to -1.0.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>image (torch.Tensor): The input tensor.
-width (float): The width of the center column.</dd>
+<dd><div class="first last line-block">
+<div class="line">image (torch.Tensor): The input tensor.</div>
+<div class="line">width (float): The width of the center column.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The output tensor.</dd>
 </dl>
@@ -431,8 +509,11 @@ width (float): The width of the center column.</dd>
 <dd><p>Sets the center row of width <cite>width</cite> to -1.0.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>image (torch.Tensor): The input tensor.
-width (float): The width of the center row.</dd>
+<dd><div class="first last line-block">
+<div class="line">image (torch.Tensor): The input tensor.</div>
+<div class="line">width (float): The width of the center row.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The output tensor.</dd>
 </dl>

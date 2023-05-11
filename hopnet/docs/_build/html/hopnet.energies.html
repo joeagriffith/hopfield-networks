@@ -94,10 +94,12 @@
 <dt id="hopnet.energies.error.ErrorEnergy">
 <em class="property">class </em><code class="descclassname">hopnet.energies.error.</code><code class="descname">ErrorEnergy</code><span class="sig-paren">(</span><em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/energies/error.html#ErrorEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.error.ErrorEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hopnet.energies.Energy" title="hopnet.energies.Energy"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.energies.Energy</span></code></a></p>
-<p>Inspired by Predictive Coding, the energy function allows for the problem to be reformulated as an energy minimization problem.
-As the error is squared, the energy function is convex and is lower bounded by 0.
-The energy is defined as the mean squared error between the current state and the next state of the network.
-The network will be stable if it is in low energy.</p>
+<div class="line-block">
+<div class="line">Inspired by Predictive Coding, the energy function allows for the problem to be reformulated as an energy minimization problem.</div>
+<div class="line">As the error is squared, the energy function is convex and is lower bounded by 0.</div>
+<div class="line">The energy is defined as the mean squared error between the current state and the next state of the network.</div>
+<div class="line">The network will be stable if it is in low energy.</div>
+</div>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>actv_fn (Activation): The activation function to apply to the next state of the network.</dd>
@@ -110,10 +112,13 @@ The network will be stable if it is in low energy.</p>
 <dd><p>The error energy function.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
-weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).
-bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).
-actv_fn (Activation): The activation function to apply to the next state of the network.</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</div>
+<div class="line">weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</div>
+<div class="line">bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</div>
+<div class="line">actv_fn (Activation): The activation function to apply to the next state of the network.</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</dd>
 </dl>
@@ -126,10 +131,12 @@ actv_fn (Activation): The activation function to apply to the next state of the 
 <dt id="hopnet.energies.lyapunov.LyapunovEnergy">
 <em class="property">class </em><code class="descclassname">hopnet.energies.lyapunov.</code><code class="descname">LyapunovEnergy</code><a class="reference internal" href="_modules/hopnet/energies/lyapunov.html#LyapunovEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.lyapunov.LyapunovEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hopnet.energies.Energy" title="hopnet.energies.Energy"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.energies.Energy</span></code></a></p>
-<p>This is the standard energy function used in Hopfield networks.
-While not known as the Lyapunov energy, it is a Lypunov function, which is why it has this name.
-This function cannot be used with the “energy” training mode as it is not lower bounded 
-and will cause the weights to explode in the negative direction.</p>
+<div class="line-block">
+<div class="line">This is the standard energy function used in Hopfield networks.</div>
+<div class="line">While not known as the Lyapunov energy, it is a Lypunov function, which is why it has this name.</div>
+<div class="line">This function cannot be used with the “energy” training mode as it is not lower bounded </div>
+<div class="line">and will cause the weights to explode in the negative direction.</div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -138,9 +145,12 @@ and will cause the weights to explode in the negative direction.</p>
 <dd><p>The standard Hopfield energy function.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
-weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).
-b (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</dd>
+<dd><div class="first last line-block">
+<div class="line">x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</div>
+<div class="line">weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).</div>
+<div class="line">b (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</dd>
 </dl>
