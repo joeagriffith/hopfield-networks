@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hopnet.utils.dataset &mdash; hopfield-networks 1.0.0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            hopfield-networks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">hopnet</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hopfield-networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">hopnet.utils.dataset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for hopnet.utils.dataset</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
+
+<div class="viewcode-block" id="remove_to_tensor"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.remove_to_tensor">[docs]</a><span class="k">def</span> <span class="nf">remove_to_tensor</span><span class="p">(</span><span class="n">transform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes the ToTensor transform from a torchvision.transforms.Compose object.</span>
+<span class="sd">    Useful for when you want to apply a transform to a dataset, but the data is already a tensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        transform (torchvision.transforms.Compose): The transform to remove the ToTensor transform from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torchvision.transforms.Compose: The transform with the ToTensor transform removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span> <span class="o">==</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span> <span class="o">==</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">:</span>
+        <span class="n">new_transforms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transform</span><span class="o">.</span><span class="n">transforms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">!=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">:</span>
+                <span class="n">new_transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span><span class="n">new_transforms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">transform</span></div>
+
+<div class="viewcode-block" id="PreloadedDataset"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.PreloadedDataset">[docs]</a><span class="k">class</span> <span class="nc">PreloadedDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset class that preloades all data onto the specified device.</span>
+<span class="sd">    This prevents having to move batches of data to the device at each iteration of training.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        main_dir (str): The path to the directory containing the data.</span>
+<span class="sd">        shape (tuple): The shape of an example datum.</span>
+<span class="sd">        transform (torchvision.transforms.Compose): The transform to apply to the data.</span>
+<span class="sd">        device (str): The device to load the data onto.</span>
+<span class="sd">        shuffle (bool): Whether to shuffle the data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_dir</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_dir</span> <span class="o">=</span> <span class="n">main_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">main_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffled</span> <span class="o">=</span> <span class="n">shuffle</span> <span class="c1">#  This flag is useful for cross_val_split_by_class()  </span>
+        <span class="k">if</span> <span class="s1">&#39;.DS_Store&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;.DS_Store&#39;</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="n">pre_transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">remove_to_tensor</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>                
+        
+        <span class="c1">#  preload images</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">loop</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">),</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  
+            <span class="k">for</span> <span class="n">class_idx</span><span class="p">,</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">loop</span><span class="p">:</span>
+                <span class="n">class_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_dir</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+                <span class="n">image_names</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">class_dir</span><span class="p">)</span>
+                <span class="n">class_images</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">image_names</span><span class="p">:</span>
+                    <span class="n">img_loc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">class_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+                    <span class="n">class_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">img_loc</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)))</span>
+
+                <span class="n">class_images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">class_images</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">class_targets</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">class_images</span><span class="p">))</span> <span class="o">*</span> <span class="n">class_idx</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">,</span> <span class="n">class_images</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span> <span class="n">class_targets</span><span class="p">])</span>
+            
+            <span class="c1">#  Transformed_images stores a transformed copy of images.</span>
+            <span class="c1">#  This enables us to keep a virgin copy of the original images</span>
+            <span class="c1">#  which we can use at each epoch to generate different transformed images</span>
+            <span class="c1">#  Note: we must remember to call dataset.transform() when requesting transformed images</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span><span class="p">()</span>
+        
+<div class="viewcode-block" id="PreloadedDataset.from_dataset"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.PreloadedDataset.from_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a dataset from torchvision.datasets to a PreloadedDataset. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset (torchvision.datasets): The dataset to convert.</span>
+<span class="sd">            transform (torchvision.transforms.Compose): The transform to apply to the data.</span>
+<span class="sd">            device (str): The device to load the data onto.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PreloadedDataset: The converted dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">preloaded_dataset</span> <span class="o">=</span> <span class="n">PreloadedDataset</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)),</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Data is {type(data[0])} not torch.Tensor&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Targets is {type(targets[0])} not torch.Tensor&quot;</span><span class="p">)</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">remove_to_tensor</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+        
+        <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">preloaded_dataset</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">preloaded_dataset</span></div>
+              
+            
+<div class="viewcode-block" id="PreloadedDataset.apply_transform"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.PreloadedDataset.apply_transform">[docs]</a>    <span class="k">def</span> <span class="nf">apply_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies a transform to the data in batches so as not to overload memory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device (str): The device to load the data onto.</span>
+<span class="sd">            batch_size (int): The size of each batch.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+            
+            <span class="n">low</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="n">batch_size</span>
+            <span class="k">while</span> <span class="n">low</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">high</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">):</span>
+                    <span class="n">high</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span><span class="p">[</span><span class="n">low</span><span class="p">:</span><span class="n">high</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">low</span><span class="p">:</span><span class="n">high</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">low</span> <span class="o">+=</span> <span class="n">batch_size</span>
+                <span class="n">high</span> <span class="o">+=</span> <span class="n">batch_size</span></div>
+        
+        
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Now a man who needs no introduction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns images which have already been transformed - unless self.transform is none</span>
+<span class="sd">        This saves us from transforming individual images, which is very slow.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx (int): The index of the image to return.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The data at the given index.</span>
+<span class="sd">            torch.Tensor: The target of the data at the given index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>        
+    
+    
+    <span class="k">def</span> <span class="nf">_shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shuffles the data and targets together in the dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffled</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shuffled</span> <span class="o">=</span> <span class="kc">True</span>  
+    
+
+<div class="viewcode-block" id="PreloadedDataset.cross_val_split_by_class"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.dataset.PreloadedDataset.cross_val_split_by_class">[docs]</a>    <span class="k">def</span> <span class="nf">cross_val_split_by_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_ratio</span><span class="p">,</span> <span class="n">val_idx</span><span class="p">,</span> <span class="n">val_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a training and validation dataset, split with an equal number of each class.</span>
+<span class="sd">        a val_idx from 0 -&gt; 1/val_ratio determines which segment of each class is used for validation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val_ratio (float): The ratio of validation data to training data.</span>
+<span class="sd">            val_idx (int): The index of the validation segment to use.</span>
+<span class="sd">            val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.</span>
+<span class="sd">            device (str): The device to load the data onto.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PreloadedDataset: The training dataset.</span>
+<span class="sd">            PreloadedDataset: The validation dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffled</span><span class="p">,</span> <span class="s2">&quot;Dataset must not be shuffled to split by class&quot;</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">val_ratio</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">val_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val_idx</span> <span class="o">&lt;=</span> <span class="n">max_idx</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;Invalid val_idx: </span><span class="si">{val_idx}</span><span class="s2"> for ratio: </span><span class="si">{val_ratio}</span><span class="s2">&quot;</span>
+        
+        <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">PreloadedDataset</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+        <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">PreloadedDataset</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+        <span class="n">trans_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">train_dataset</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">trans_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">trans_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">trans_shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">val_dataset</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">trans_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">trans_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">trans_shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="n">train_dataset</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span>
+        <span class="n">val_dataset</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">val_transform</span>
+        <span class="n">val_transform</span> <span class="o">=</span> <span class="n">remove_to_tensor</span><span class="p">(</span><span class="n">val_transform</span><span class="p">)</span>
+        
+        <span class="n">num_per_class</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span><span class="o">//</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span>
+        <span class="n">split_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_per_class</span><span class="o">*</span><span class="n">val_ratio</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_per_class</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_size</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">split_size</span><span class="p">,</span> <span class="s2">&quot;Unable to split by class with current parameters&quot;</span>
+        
+        <span class="c1">#  Iterate over data in batches of class_size</span>
+        <span class="c1">#  Split into segments and allocate the segments to either train/val datasets</span>
+        <span class="k">for</span> <span class="n">class_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)):</span>
+            <span class="n">class_indices</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+                <span class="n">class_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">num_per_class</span><span class="o">*</span><span class="n">class_idx</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_indices</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+            <span class="n">val_indices</span> <span class="o">=</span> <span class="n">class_indices</span><span class="p">[</span><span class="n">val_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">val_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">train_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">class_indices</span><span class="p">[</span><span class="n">val_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">elif</span> <span class="n">val_idx</span> <span class="o">==</span> <span class="n">max_idx</span><span class="p">:</span>
+                <span class="n">train_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">class_indices</span><span class="p">[:</span><span class="n">val_idx</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">train_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">class_indices</span><span class="p">[:</span><span class="n">val_idx</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">class_indices</span><span class="p">[</span><span class="n">val_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">:])])</span>
+
+            <span class="n">train_dataset</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                <span class="n">train_dataset</span><span class="o">.</span><span class="n">images</span><span class="p">,</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">train_indices</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">])</span>
+            <span class="n">train_dataset</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                <span class="n">train_dataset</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="n">train_indices</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">])</span>
+            <span class="n">train_dataset</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                <span class="n">train_dataset</span><span class="o">.</span><span class="n">transformed_images</span><span class="p">,</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">transformed_images</span><span class="p">[</span><span class="n">train_indices</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">])</span>
+
+            <span class="n">val_dataset</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                <span class="n">val_dataset</span><span class="o">.</span><span class="n">images</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">val_indices</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">])</span>
+            <span class="n">val_dataset</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                <span class="n">val_dataset</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="n">val_indices</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">])</span>
+            <span class="n">val_dataset</span><span class="o">.</span><span class="n">transformed_images</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                <span class="n">val_dataset</span><span class="o">.</span><span class="n">transformed_images</span><span class="p">,</span>
+                <span class="n">val_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">val_indices</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">val_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">val_indices</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span><span class="c1"># Untransformed, as we want to test on un-augmented data</span>
+            <span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">train_dataset</span><span class="p">,</span> <span class="n">val_dataset</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joe Griffith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

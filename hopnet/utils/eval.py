@@ -38,11 +38,11 @@ def evaluate(model, data_loader, device, flatten=False, width=0.2):
     Returns the percentage of pixels that are different between the output and the raw input>
     Score is a mean across 5 noising functions.
     Noising functions are:
-        - Masking the center column
-        - Masking the center row
-        - Masking the center row and column
-        - Downsampling and upsampling
-        - Adding salt and pepper noise
+    - Masking the center column
+    - Masking the center row
+    - Masking the center row and column
+    - Downsampling and upsampling
+    - Adding salt and pepper noise
 
     Args:
         model (torch.nn.Module): The model to evaluate.
@@ -85,9 +85,9 @@ def evaluate_mask(model, dataloader, batch_size, width=0.2, loss_fn=F.l1_loss, f
     """
     Alternative measure of loss, not scaled the same as the above and uses less noising functions.
     Noising functions are:
-        - Masking the center column
-        - Masking the center row
-        - Masking the center row and column
+    - Masking the center column
+    - Masking the center row
+    - Masking the center row and column
 
     Args:
         model (torch.nn.Module): The model to evaluate.

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hopnet.utils package &mdash; hopfield-networks 1.0.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="hopnet.models package" href="hopnet.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hopfield-networks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">hopnet</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="hopnet.html">hopnet package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="hopnet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="hopnet.activations.html">hopnet.activations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.energies.html">hopnet.energies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.models.html">hopnet.models package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">hopnet.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hopnet.html#module-hopnet">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hopfield-networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">hopnet</a></li>
+          <li class="breadcrumb-item"><a href="hopnet.html">hopnet package</a></li>
+      <li class="breadcrumb-item active">hopnet.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hopnet.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="hopnet-utils-package">
+<h1>hopnet.utils package<a class="headerlink" href="#hopnet-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hopnet.utils.dataset">
+<span id="hopnet-utils-dataset-module"></span><h2>hopnet.utils.dataset module<a class="headerlink" href="#module-hopnet.utils.dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.utils.dataset.PreloadedDataset">
+<em class="property">class </em><code class="descclassname">hopnet.utils.dataset.</code><code class="descname">PreloadedDataset</code><span class="sig-paren">(</span><em>main_dir</em>, <em>shape</em>, <em>transform=None</em>, <em>device='cpu'</em>, <em>shuffle=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#PreloadedDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.PreloadedDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
+<p>Dataset class that preloades all data onto the specified device.
+This prevents having to move batches of data to the device at each iteration of training.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>main_dir (str): The path to the directory containing the data.
+shape (tuple): The shape of an example datum.
+transform (torchvision.transforms.Compose): The transform to apply to the data.
+device (str): The device to load the data onto.
+shuffle (bool): Whether to shuffle the data.</dd>
+</dl>
+<dl class="method">
+<dt id="hopnet.utils.dataset.PreloadedDataset.apply_transform">
+<code class="descname">apply_transform</code><span class="sig-paren">(</span><em>device=None</em>, <em>batch_size=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#PreloadedDataset.apply_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.PreloadedDataset.apply_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a transform to the data in batches so as not to overload memory.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>device (str): The device to load the data onto.
+batch_size (int): The size of each batch.</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.utils.dataset.PreloadedDataset.cross_val_split_by_class">
+<code class="descname">cross_val_split_by_class</code><span class="sig-paren">(</span><em>val_ratio</em>, <em>val_idx</em>, <em>val_transform=None</em>, <em>device='cpu'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#PreloadedDataset.cross_val_split_by_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.PreloadedDataset.cross_val_split_by_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a training and validation dataset, split with an equal number of each class.
+a val_idx from 0 -&gt; 1/val_ratio determines which segment of each class is used for validation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>val_ratio (float): The ratio of validation data to training data.
+val_idx (int): The index of the validation segment to use.
+val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.
+device (str): The device to load the data onto.</dd>
+<dt>Returns:</dt>
+<dd>PreloadedDataset: The training dataset.
+PreloadedDataset: The validation dataset.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.utils.dataset.PreloadedDataset.from_dataset">
+<code class="descname">from_dataset</code><span class="sig-paren">(</span><em>transform</em>, <em>device='cpu'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#PreloadedDataset.from_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.PreloadedDataset.from_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a dataset from torchvision.datasets to a PreloadedDataset.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>dataset (torchvision.datasets): The dataset to convert.
+transform (torchvision.transforms.Compose): The transform to apply to the data.
+device (str): The device to load the data onto.</dd>
+<dt>Returns:</dt>
+<dd>PreloadedDataset: The converted dataset.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.dataset.remove_to_tensor">
+<code class="descclassname">hopnet.utils.dataset.</code><code class="descname">remove_to_tensor</code><span class="sig-paren">(</span><em>transform</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/dataset.html#remove_to_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.dataset.remove_to_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the ToTensor transform from a torchvision.transforms.Compose object.
+Useful for when you want to apply a transform to a dataset, but the data is already a tensor.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>transform (torchvision.transforms.Compose): The transform to remove the ToTensor transform from.</dd>
+<dt>Returns:</dt>
+<dd>torchvision.transforms.Compose: The transform with the ToTensor transform removed.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.utils.eval">
+<span id="hopnet-utils-eval-module"></span><h2>hopnet.utils.eval module<a class="headerlink" href="#module-hopnet.utils.eval" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="hopnet.utils.eval.evaluate">
+<code class="descclassname">hopnet.utils.eval.</code><code class="descname">evaluate</code><span class="sig-paren">(</span><em>model</em>, <em>data_loader</em>, <em>device</em>, <em>flatten=False</em>, <em>width=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/eval.html#evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.eval.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the percentage of pixels that are different between the output and the raw input&gt;
+Score is a mean across 5 noising functions.
+Noising functions are:
+- Masking the center column
+- Masking the center row
+- Masking the center row and column
+- Downsampling and upsampling
+- Adding salt and pepper noise</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>model (torch.nn.Module): The model to evaluate.
+data_loader (torch.utils.data.DataLoader): The data loader to use.
+device (str): The device to use.
+flatten (bool): Whether or not to flatten the input.
+width (float): The width of the mask to use.</dd>
+<dt>Returns:</dt>
+<dd>float: The percentage of pixels that are different between the output and the raw input.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.eval.evaluate_mask">
+<code class="descclassname">hopnet.utils.eval.</code><code class="descname">evaluate_mask</code><span class="sig-paren">(</span><em>model</em>, <em>dataloader</em>, <em>batch_size</em>, <em>width=0.2</em>, <em>loss_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>flatten=False</em>, <em>device=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/eval.html#evaluate_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.eval.evaluate_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative measure of loss, not scaled the same as the above and uses less noising functions.
+Noising functions are:
+- Masking the center column
+- Masking the center row
+- Masking the center row and column</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>model (torch.nn.Module): The model to evaluate.
+dataloader (torch.utils.data.DataLoader): The data loader to use.
+batch_size (int): The batch size to use.
+width (float): The width of the mask to use.
+loss_fn (torch.nn.Module): The loss function to use.
+flatten (bool): Whether or not to flatten the input.
+device (str): The device to use.</dd>
+<dt>Returns:</dt>
+<dd>float: The loss. Not scaled the same as in evaluate().</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.eval.topk_accuracy">
+<code class="descclassname">hopnet.utils.eval.</code><code class="descname">topk_accuracy</code><span class="sig-paren">(</span><em>output</em>, <em>target</em>, <em>topk=(1</em>, <em>)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/eval.html#topk_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.eval.topk_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the precision for the specified values of k</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>output (torch.Tensor): The output tensor.
+target (torch.Tensor): The target tensor.
+topk (tuple): The values of k to compute the precision for.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The precision for the specified values of k.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.utils.functional">
+<span id="hopnet-utils-functional-module"></span><h2>hopnet.utils.functional module<a class="headerlink" href="#module-hopnet.utils.functional" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="hopnet.utils.functional.binary_to_spin">
+<code class="descclassname">hopnet.utils.functional.</code><code class="descname">binary_to_spin</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/functional.html#binary_to_spin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.functional.binary_to_spin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to convert tensors from binary to spin representation.
+[0, 1] -&gt; [-1, 1]</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.utils.train">
+<span id="hopnet-utils-train-module"></span><h2>hopnet.utils.train module<a class="headerlink" href="#module-hopnet.utils.train" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="hopnet.utils.train.train_hopfield">
+<code class="descclassname">hopnet.utils.train.</code><code class="descname">train_hopfield</code><span class="sig-paren">(</span><em>model</em>, <em>train_loader</em>, <em>model_name</em>, <em>flatten=False</em>, <em>model_dir='out/weights'</em>, <em>log_dir='out/logs'</em>, <em>save_model=True</em>, <em>device='cpu'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/train.html#train_hopfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.train.train_hopfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only to be used with the HopfieldNet model. 
+This is the standard learning procedure for Hopfield Networks
+which is to take the outer product of the data with itself and averages over the dataset.
+This is a one-step method.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>model (torch.nn.Module): The model to train.
+train_loader (torch.utils.data.DataLoader): The training data.
+model_name (str): The name of the model.
+flatten (bool): Whether to flatten the input data.
+model_dir (str): The directory to save the model weights.
+log_dir (str): The directory to save the logs.
+save_model (bool): Whether to save the model weights.
+device (str): The device to use.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.train.train_iterative">
+<code class="descclassname">hopnet.utils.train.</code><code class="descname">train_iterative</code><span class="sig-paren">(</span><em>model</em>, <em>train_loader</em>, <em>optimiser</em>, <em>model_name</em>, <em>num_epochs</em>, <em>criterion=None</em>, <em>scheduler=None</em>, <em>mode='default'</em>, <em>flatten=False</em>, <em>model_dir='out/weights'</em>, <em>log_dir='out/logs'</em>, <em>step=0</em>, <em>save_model=True</em>, <em>untrain_after=None</em>, <em>untrain_loss_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>untrain_const=0.5</em>, <em>eval_loss_every=None</em>, <em>device='cpu'</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/train.html#train_iterative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.train.train_iterative" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method implements many different training methods for Hopfield Networks.
+hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.
+This is done by taking the outer product of the data with itself and averages over the dataset.
+gardner - Improves upon ‘hopfield’ by only updating the incoming weights of incorrect neurons.
+energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.
+reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.
+PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>model (torch.nn.Module): The model to train.
+train_loader (torch.utils.data.DataLoader): The training data.
+optimiser (torch.optim.Optimizer): The optimiser to use.
+model_name (str): The name of the model.
+num_epochs (int): The number of epochs to train for.
+criterion (torch.nn.Module): The loss function to use.
+scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.
+mode (str): The training mode to use.
+flatten (bool): Whether to flatten the input data.
+model_dir (str): The directory to save the model weights.
+log_dir (str): The directory to save the logs.
+step (int): The current step of the training procedure.
+save_model (bool): Whether to save the model weights.
+untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.
+untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.
+eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.
+device (str): The device to use.
+plot (bool): Whether to plot the training loss using TensorBoard.</dd>
+<dt>Returns:</dt>
+<dd>train_loss (list): The training loss for each epoch.
+train_energy (list): The training energy for each epoch.
+step (int): The current step of the training procedure.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.train.untrain_grad">
+<code class="descclassname">hopnet.utils.train.</code><code class="descname">untrain_grad</code><span class="sig-paren">(</span><em>x</em>, <em>model</em>, <em>optimiser</em>, <em>mode</em>, <em>loss_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>untrain_const=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/train.html#untrain_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.train.untrain_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increases the energy at the output of the network proportionally to the reconstruction loss.
+Aims to combat the effects of spurious minima, by directly increasing their energy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.
+model (torch.nn.Module): The model to evaluate.
+optimiser (torch.optim.Optimizer): The optimiser to use.
+mode (str): The training mode to use.
+loss_fn (torch.nn.Module): The loss function to use.
+untrain_const (float): The constant to multiply the gradient by.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.utils.transforms">
+<span id="hopnet-utils-transforms-module"></span><h2>hopnet.utils.transforms module<a class="headerlink" href="#module-hopnet.utils.transforms" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.utils.transforms.GaussianNoise">
+<em class="property">class </em><code class="descclassname">hopnet.utils.transforms.</code><code class="descname">GaussianNoise</code><span class="sig-paren">(</span><em>mean=0.0</em>, <em>std=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#GaussianNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.GaussianNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Applies Gaussian noise to the input image. This transform returns continuous values so it should only be used with continuous Hopfield networks which are not yet implemented.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>mean (float): The mean of the Gaussian distribution.
+std (float): The standard deviation of the Gaussian distribution.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="hopnet.utils.transforms.Scale">
+<em class="property">class </em><code class="descclassname">hopnet.utils.transforms.</code><code class="descname">Scale</code><span class="sig-paren">(</span><em>min=0.0</em>, <em>max=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#Scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.Scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
+<p>Scale the input tensor from [min, max] to [-1, 1].</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>min (float): The minimum value of the input tensor.
+max (float): The maximum value of the input tensor.</dd>
+</dl>
+<dl class="method">
+<dt id="hopnet.utils.transforms.Scale.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#Scale.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.Scale.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the scaling to the input tensor.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor, scaled to [-1, 1].</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.utils.transforms.Scale.inverse">
+<code class="descname">inverse</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#Scale.inverse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.Scale.inverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the inverse scaling to the input tensor.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor, scaled to [min, max].</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.transforms.add_gaussian_noise">
+<code class="descclassname">hopnet.utils.transforms.</code><code class="descname">add_gaussian_noise</code><span class="sig-paren">(</span><em>image</em>, <em>mean=0.0</em>, <em>std=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#add_gaussian_noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.add_gaussian_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds Gaussian noise to the input image.
+Should only be used with continuous Hopfield networks which are not yet implemented.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image (torch.Tensor): The input tensor.
+mean (float): The mean of the Gaussian distribution.
+std (float): The standard deviation of the Gaussian distribution.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.transforms.add_salt_and_pepper_noise">
+<code class="descclassname">hopnet.utils.transforms.</code><code class="descname">add_salt_and_pepper_noise</code><span class="sig-paren">(</span><em>image</em>, <em>p=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#add_salt_and_pepper_noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.add_salt_and_pepper_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds salt and pepper noise to the input image. Essentially flips random pixels to -1.0 or 1.0.
+Only works with discrete Hopfield networks.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image (torch.Tensor): The input tensor.
+p (float): The probability of flipping a pixel.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.transforms.downsample_and_upsample">
+<code class="descclassname">hopnet.utils.transforms.</code><code class="descname">downsample_and_upsample</code><span class="sig-paren">(</span><em>image</em>, <em>scale=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#downsample_and_upsample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.downsample_and_upsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales the input image down by a factor of <cite>scale</cite> and then back up to the original size.
+Fidelity is lost in the process.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image (torch.Tensor): The input tensor.
+scale (int): The scale factor.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.transforms.mask_center_column">
+<code class="descclassname">hopnet.utils.transforms.</code><code class="descname">mask_center_column</code><span class="sig-paren">(</span><em>image</em>, <em>width</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#mask_center_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.mask_center_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the center column of width <cite>width</cite> to -1.0.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image (torch.Tensor): The input tensor.
+width (float): The width of the center column.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.utils.transforms.mask_center_row">
+<code class="descclassname">hopnet.utils.transforms.</code><code class="descname">mask_center_row</code><span class="sig-paren">(</span><em>image</em>, <em>width</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/utils/transforms.html#mask_center_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.utils.transforms.mask_center_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the center row of width <cite>width</cite> to -1.0.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image (torch.Tensor): The input tensor.
+width (float): The width of the center row.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hopnet.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hopnet.models.html" class="btn btn-neutral float-left" title="hopnet.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joe Griffith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

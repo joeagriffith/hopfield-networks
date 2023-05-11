@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hopnet.utils.train &mdash; hopfield-networks 1.0.0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            hopfield-networks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">hopnet</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hopfield-networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">hopnet.utils.train</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for hopnet.utils.train</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">hopnet.utils.eval</span> <span class="k">import</span> <span class="n">evaluate_mask</span><span class="p">,</span> <span class="n">evaluate</span>
+<span class="kn">from</span> <span class="nn">hopnet.models</span> <span class="k">import</span> <span class="n">PCHNet</span><span class="p">,</span> <span class="n">PCHNetV2</span>
+<span class="kn">from</span> <span class="nn">hopnet.activations</span> <span class="k">import</span> <span class="n">Tanh</span>
+    
+
+<div class="viewcode-block" id="untrain_grad"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.train.untrain_grad">[docs]</a><span class="k">def</span> <span class="nf">untrain_grad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimiser</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">loss_fn</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">l1_loss</span><span class="p">,</span> <span class="n">untrain_const</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Increases the energy at the output of the network proportionally to the reconstruction loss.</span>
+<span class="sd">    Aims to combat the effects of spurious minima, by directly increasing their energy.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): The input tensor.</span>
+<span class="sd">        model (torch.nn.Module): The model to evaluate.</span>
+<span class="sd">        optimiser (torch.optim.Optimizer): The optimiser to use.</span>
+<span class="sd">        mode (str): The training mode to use.</span>
+<span class="sd">        loss_fn (torch.nn.Module): The loss function to use.</span>
+<span class="sd">        untrain_const (float): The constant to multiply the gradient by.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># scales loss between 0 and 1 (for -1 and 1 activations)</span>
+    <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">l1_loss</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">elif</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">/</span> <span class="mf">4.0</span>
+
+    <span class="n">loss</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">loss</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">)</span> <span class="c1"># Pushes the loss higher for smaller values, still between 0 and 1</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;gardiner&#39;</span><span class="p">:</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">loss</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">untrain_const</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">diagonal</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;energy&#39;</span><span class="p">:</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="o">-</span><span class="n">model</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">loss</span> <span class="o">*</span> <span class="n">untrain_const</span>
+        <span class="n">energy</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="train_hopfield"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.train.train_hopfield">[docs]</a><span class="k">def</span> <span class="nf">train_hopfield</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">train_loader</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="p">,</span>
+    <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">model_dir</span><span class="o">=</span><span class="s2">&quot;out/weights&quot;</span><span class="p">,</span>
+    <span class="n">log_dir</span><span class="o">=</span><span class="s2">&quot;out/logs&quot;</span><span class="p">,</span>
+    <span class="n">save_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Only to be used with the HopfieldNet model. </span>
+<span class="sd">    This is the standard learning procedure for Hopfield Networks</span>
+<span class="sd">    which is to take the outer product of the data with itself and averages over the dataset.</span>
+<span class="sd">    This is a one-step method.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): The model to train.</span>
+<span class="sd">        train_loader (torch.utils.data.DataLoader): The training data.</span>
+<span class="sd">        model_name (str): The name of the model.</span>
+<span class="sd">        flatten (bool): Whether to flatten the input data.</span>
+<span class="sd">        model_dir (str): The directory to save the model weights.</span>
+<span class="sd">        log_dir (str): The directory to save the logs.</span>
+<span class="sd">        save_model (bool): Whether to save the model weights.</span>
+<span class="sd">        device (str): The device to use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+    <span class="n">bias</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+        <span class="n">weight</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">bias</span> <span class="o">+=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="n">weight</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+    <span class="n">bias</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">bias</span></div>
+
+<div class="viewcode-block" id="train_iterative"><a class="viewcode-back" href="../../../hopnet.utils.html#hopnet.utils.train.train_iterative">[docs]</a><span class="k">def</span> <span class="nf">train_iterative</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> 
+    <span class="n">train_loader</span><span class="p">,</span>
+    <span class="n">optimiser</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="p">,</span> 
+    <span class="n">num_epochs</span><span class="p">,</span> 
+    <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
+    <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+    <span class="n">model_dir</span><span class="o">=</span><span class="s2">&quot;out/weights&quot;</span><span class="p">,</span>
+    <span class="n">log_dir</span><span class="o">=</span><span class="s2">&quot;out/logs&quot;</span><span class="p">,</span> 
+    <span class="n">step</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="n">save_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">untrain_after</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">untrain_loss_fn</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">l1_loss</span><span class="p">,</span>
+    <span class="n">untrain_const</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">eval_loss_every</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method implements many different training methods for Hopfield Networks.</span>
+<span class="sd">    hopfield - performs the standard learning procedure for Hopfield Networks iteratively over the dataset.</span>
+<span class="sd">    This is done by taking the outer product of the data with itself and averages over the dataset.</span>
+<span class="sd">    gardner - Improves upon &#39;hopfield&#39; by only updating the incoming weights of incorrect neurons.</span>
+<span class="sd">    energy - formulates the problem as an energy minimisation problem, and updates the weights to reduce this value.</span>
+<span class="sd">    reconstruction_err - updates the weights to reduce the reconstruction error, which uses mean squared error as its criterion.</span>
+<span class="sd">    PCHNetV2 - aims to combine both reconstruction_err and energy modes, though is not effective in its current state.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): The model to train.</span>
+<span class="sd">        train_loader (torch.utils.data.DataLoader): The training data.</span>
+<span class="sd">        optimiser (torch.optim.Optimizer): The optimiser to use.</span>
+<span class="sd">        model_name (str): The name of the model.</span>
+<span class="sd">        num_epochs (int): The number of epochs to train for.</span>
+<span class="sd">        criterion (torch.nn.Module): The loss function to use.</span>
+<span class="sd">        scheduler (torch.optim.lr_scheduler._LRScheduler): The learning rate scheduler to use.</span>
+<span class="sd">        mode (str): The training mode to use.</span>
+<span class="sd">        flatten (bool): Whether to flatten the input data.</span>
+<span class="sd">        model_dir (str): The directory to save the model weights.</span>
+<span class="sd">        log_dir (str): The directory to save the logs.</span>
+<span class="sd">        step (int): The current step of the training procedure.</span>
+<span class="sd">        save_model (bool): Whether to save the model weights.</span>
+<span class="sd">        untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.</span>
+<span class="sd">        untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.</span>
+<span class="sd">        eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.</span>
+<span class="sd">        device (str): The device to use.</span>
+<span class="sd">        plot (bool): Whether to plot the training loss using TensorBoard.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        train_loss (list): The training loss for each epoch.</span>
+<span class="sd">        train_energy (list): The training energy for each epoch.</span>
+<span class="sd">        step (int): The current step of the training procedure.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{log_dir}</span><span class="s2">/</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">train_loss</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">train_energy</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">best_train_loss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;hopfield&#39;</span><span class="p">,</span> <span class="s1">&#39;gardner&#39;</span><span class="p">,</span> <span class="s1">&#39;energy&#39;</span><span class="p">,</span> <span class="s1">&#39;reconstruction_err&#39;</span><span class="p">,</span> <span class="s1">&#39;PCHNetV2&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">save_model</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">eval_loss_every</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;eval_loss_every must be specified if save_model is True&quot;</span>
+
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+        
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">),</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    
+
+        <span class="n">epoch_train_energy</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loop</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">loop</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Epoch [</span><span class="si">{epoch}</span><span class="s2">/</span><span class="si">{num_epochs}</span><span class="s2">]&quot;</span><span class="p">)</span>
+                <span class="n">loop</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
+                    <span class="n">train_energy</span> <span class="o">=</span> <span class="n">train_energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">train_loss</span> <span class="o">=</span> <span class="n">train_loss</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> 
+                <span class="p">)</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">start_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">optimiser</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;hopfield&#39;</span><span class="p">:</span>
+                <span class="n">grad</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">grad</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1">#  May be unsuitable name </span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;gardner&#39;</span><span class="p">:</span>
+                <span class="n">grad</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+                <span class="c1"># Determines which neurons are incorrect, and gives them a value of 1, and 0 otherwise.</span>
+                <span class="n">next_x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">is_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_x</span> <span class="o">!=</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+                <span class="n">is_diff_mat</span> <span class="o">=</span> <span class="n">is_diff</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Element-wise multiplication to set incoming weights of correct neurons to 0.</span>
+                <span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span> <span class="o">*</span> <span class="n">is_diff_mat</span>
+
+                <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">is_diff</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">is_diff</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;energy&#39;</span><span class="p">:</span>
+                <span class="n">energy</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;reconstruction_err&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">==</span> <span class="n">PCHNet</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">==</span> <span class="n">PCHNetV2</span><span class="p">,</span> <span class="s2">&quot;step_err mode only works with PCHNet&quot;</span>
+
+                <span class="n">out</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">actv_fn</span><span class="o">=</span><span class="n">Tanh</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span> <span class="c1"># Using Tanh to allow gradients to flow through</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;PCHNetV2&quot;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">==</span> <span class="n">PCHNetV2</span><span class="p">,</span> <span class="s2">&quot;PCHNetV2 mode only works with PCHNetV2&quot;</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">actv_fn</span><span class="o">=</span><span class="n">Tanh</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+                <span class="n">energy</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;pass&quot;</span><span class="p">:</span>
+                <span class="k">pass</span>
+            
+            <span class="c1"># Untrain to reduce spurious minima</span>
+            <span class="k">if</span> <span class="n">untrain_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">untrain_after</span><span class="p">:</span>
+                <span class="n">untrain_grad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimiser</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">untrain_loss_fn</span><span class="p">,</span> <span class="n">untrain_const</span><span class="p">)</span>
+
+            <span class="n">optimiser</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">epoch_train_energy</span> <span class="o">+=</span> <span class="n">energy</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="n">train_energy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_train_energy</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">eval_loss_every</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">eval_loss_every</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+                    <span class="n">train_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="n">flatten</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">train_loss</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">save_model</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">best_train_loss</span> <span class="o">&gt;</span> <span class="n">train_loss</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{model_dir}</span><span class="s1">/</span><span class="si">{model_name}</span><span class="s1">.pth&#39;</span><span class="p">)</span>
+                            <span class="n">best_train_loss</span> <span class="o">=</span> <span class="n">train_loss</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+        <span class="n">step</span> <span class="o">+=</span> <span class="n">n</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;Training Loss&quot;</span><span class="p">,</span> <span class="n">train_loss</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">step</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;Training Energy&quot;</span><span class="p">,</span> <span class="n">train_energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">step</span><span class="p">)</span>
+        
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Best train loss: </span><span class="si">{best_train_loss}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">train_energy</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">train_loss</span><span class="p">),</span> <span class="n">step</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joe Griffith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

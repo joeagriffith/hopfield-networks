@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hopnet.activations package &mdash; hopfield-networks 1.0.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hopnet.energies package" href="hopnet.energies.html" />
+    <link rel="prev" title="hopnet package" href="hopnet.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hopfield-networks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">hopnet</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="hopnet.html">hopnet package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="hopnet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">hopnet.activations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.energies.html">hopnet.energies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.models.html">hopnet.models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.utils.html">hopnet.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hopnet.html#module-hopnet">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hopfield-networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">hopnet</a></li>
+          <li class="breadcrumb-item"><a href="hopnet.html">hopnet package</a></li>
+      <li class="breadcrumb-item active">hopnet.activations package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hopnet.activations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="hopnet-activations-package">
+<h1>hopnet.activations package<a class="headerlink" href="#hopnet-activations-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hopnet.activations.hopfield">
+<span id="hopnet-activations-hopfield-module"></span><h2>hopnet.activations.hopfield module<a class="headerlink" href="#module-hopnet.activations.hopfield" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.activations.hopfield.HopfieldActivation">
+<em class="property">class </em><code class="descclassname">hopnet.activations.hopfield.</code><code class="descname">HopfieldActivation</code><span class="sig-paren">(</span><em>prefer: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/hopfield.html#HopfieldActivation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.hopfield.HopfieldActivation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hopnet.activations.Activation" title="hopnet.activations.Activation"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.activations.Activation</span></code></a></p>
+<p>The standard Hopfield activation function. 
+Essentially function like the sign function, 
+yet the user must specify a prefered sign for when the input is 0.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>prefer (int): The prefered sign for when the input is 0.</dd>
+<dt>Raises:</dt>
+<dd>AssertionError: If prefer is not -1 or 1</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.activations.hopfield.hopfield_activation">
+<code class="descclassname">hopnet.activations.hopfield.</code><code class="descname">hopfield_activation</code><span class="sig-paren">(</span><em>x: &lt;sphinx.ext.autodoc.importer._MockObject object at 0x7fd03c326220&gt;</em>, <em>prefer: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/hopfield.html#hopfield_activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.hopfield.hopfield_activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functional version of the Hopfield activation function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.
+prefer (int): The prefered sign for when the input is 0.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+<dt>Raises:</dt>
+<dd>AssertionError: If prefer is not -1 or 1</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.activations.identity">
+<span id="hopnet-activations-identity-module"></span><h2>hopnet.activations.identity module<a class="headerlink" href="#module-hopnet.activations.identity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.activations.identity.Identity">
+<em class="property">class </em><code class="descclassname">hopnet.activations.identity.</code><code class="descname">Identity</code><a class="reference internal" href="_modules/hopnet/activations/identity.html#Identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.identity.Identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hopnet.activations.Activation" title="hopnet.activations.Activation"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.activations.Activation</span></code></a></p>
+<p>A placeholder activation function that does nothing.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.activations.identity.identity">
+<code class="descclassname">hopnet.activations.identity.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>x: &lt;sphinx.ext.autodoc.importer._MockObject object at 0x7fcfeb8e1a60&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/identity.html#identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.identity.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>A functional version of the identity function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.kk</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.activations.stochastic">
+<span id="hopnet-activations-stochastic-module"></span><h2>hopnet.activations.stochastic module<a class="headerlink" href="#module-hopnet.activations.stochastic" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.activations.stochastic.StochasticHopfieldActivation">
+<em class="property">class </em><code class="descclassname">hopnet.activations.stochastic.</code><code class="descname">StochasticHopfieldActivation</code><span class="sig-paren">(</span><em>temperature: float</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/stochastic.html#StochasticHopfieldActivation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.stochastic.StochasticHopfieldActivation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hopnet.activations.Activation" title="hopnet.activations.Activation"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.activations.Activation</span></code></a></p>
+<p>This activation function implements simulated annealing.
+By adding noise to the activation process we can escape local minima.
+This noise is controlled by the temperature parameter.
+The noise is reduced as the step number, ‘step_i’, increases.
+This activation also works to regularise the network in training,
+taking longer to converge, but often converging to a better solution.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>temperature (float): The initial temperature of the activation function.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.activations.stochastic.stochastic_hopfield_activation">
+<code class="descclassname">hopnet.activations.stochastic.</code><code class="descname">stochastic_hopfield_activation</code><span class="sig-paren">(</span><em>x: &lt;sphinx.ext.autodoc.importer._MockObject object at 0x7fd03c2d4c70&gt;</em>, <em>temperature: float</em>, <em>step_i: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/stochastic.html#stochastic_hopfield_activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.stochastic.stochastic_hopfield_activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functional version of the Stochastic Hopfield activation function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.
+temperature (float): The initial temperature of the activation function.
+step_i (int): The current step number of the inference process.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.activations.tanh">
+<span id="hopnet-activations-tanh-module"></span><h2>hopnet.activations.tanh module<a class="headerlink" href="#module-hopnet.activations.tanh" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.activations.tanh.Tanh">
+<em class="property">class </em><code class="descclassname">hopnet.activations.tanh.</code><code class="descname">Tanh</code><span class="sig-paren">(</span><em>coef=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/tanh.html#Tanh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.tanh.Tanh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hopnet.activations.Activation" title="hopnet.activations.Activation"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.activations.Activation</span></code></a></p>
+<p>This activation function is only used during training.
+It works as a replacement for the other activation functions
+when gradients need to be propagated through the network.
+Usage can be found in the training functions in hopnet.utils.train.py</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>coef (float): The coefficient to multiply the input by.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.activations.tanh.tanh">
+<code class="descclassname">hopnet.activations.tanh.</code><code class="descname">tanh</code><span class="sig-paren">(</span><em>x: &lt;sphinx.ext.autodoc.importer._MockObject object at 0x7fcfeb8e18b0&gt;</em>, <em>coef=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/activations/tanh.html#tanh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.tanh.tanh" title="Permalink to this definition">¶</a></dt>
+<dd><p>A functional version of the tanh function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The input tensor.
+coef (float): The coefficient to multiply the input by.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The output tensor.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.activations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hopnet.activations" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.activations.Activation">
+<em class="property">class </em><code class="descclassname">hopnet.activations.</code><code class="descname">Activation</code><a class="reference internal" href="_modules/hopnet/activations.html#Activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.activations.Activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class for activation functions, inherit from this class to create a new activation function</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hopnet.html" class="btn btn-neutral float-left" title="hopnet package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hopnet.energies.html" class="btn btn-neutral float-right" title="hopnet.energies package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joe Griffith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

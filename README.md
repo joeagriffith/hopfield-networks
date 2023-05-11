@@ -19,6 +19,12 @@ Tqdm can be installed simply as 'pip install tqdm'.
 
 If the aforementioned dependencies are installed, you should be able to clone the repository and run the 'mnist_discrete' notebook yourself.
 
+## Documentation
+The package has fully complete HTML documentation which can be accessed at hopnet/docs/_build by opening any of the html files.
+
+I apologise if its not the most standard, but its my first time documenting code this way. 
+
+There's a search bar so the user can search for any function/class and see the relevant documentation on it.
 
 ## Usage
 When building a model, the user must determine the: model, activation function, energy function and training mode.

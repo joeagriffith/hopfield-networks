@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hopnet.models package &mdash; hopfield-networks 1.0.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hopnet.utils package" href="hopnet.utils.html" />
+    <link rel="prev" title="hopnet.energies package" href="hopnet.energies.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hopfield-networks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">hopnet</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="hopnet.html">hopnet package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="hopnet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="hopnet.activations.html">hopnet.activations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.energies.html">hopnet.energies package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">hopnet.models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.utils.html">hopnet.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hopnet.html#module-hopnet">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hopfield-networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">hopnet</a></li>
+          <li class="breadcrumb-item"><a href="hopnet.html">hopnet package</a></li>
+      <li class="breadcrumb-item active">hopnet.models package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hopnet.models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="hopnet-models-package">
+<h1>hopnet.models package<a class="headerlink" href="#hopnet-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hopnet.models.hopfieldnet">
+<span id="hopnet-models-hopfieldnet-module"></span><h2>hopnet.models.hopfieldnet module<a class="headerlink" href="#module-hopnet.models.hopfieldnet" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.models.hopfieldnet.HopfieldNet">
+<em class="property">class </em><code class="descclassname">hopnet.models.hopfieldnet.</code><code class="descname">HopfieldNet</code><span class="sig-paren">(</span><em>size: int</em>, <em>energy_fn: hopnet.energies.Energy</em>, <em>actv_fn: hopnet.activations.Activation</em>, <em>bias=False</em>, <em>steps=10</em>, <em>symmetric=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/hopfieldnet.html#HopfieldNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.hopfieldnet.HopfieldNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
+<p>The standard Hopfield Network. Weights are symmetric and there are no self connections. This is enforced by usage of the weight_sym_upper property.
+Any of the implemented activation and energy functions can be used. Although Tanh may yield unpredictable results as doesnt return discrete values, but continuous ones.
+this is the only model where the train_hopfield function from hopnet/utils/train.py can be used effectively.
+The model trains best using the ‘energy’ training mode with the Error energy function and Stochastic Hopfield activation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>size (int): The number of neurons in the network.
+energy_fn (Energy): The energy function to use.
+actv_fn (Activation): The activation function to use.
+bias (bool): Whether or not to use a bias vector.
+steps (int): The number of steps to perform when forward is called.
+symmetric (bool): Whether or not to enforce symmetry on the weights.</dd>
+</dl>
+<dl class="method">
+<dt id="hopnet.models.hopfieldnet.HopfieldNet.calc_energy">
+<code class="descname">calc_energy</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/hopfieldnet.html#HopfieldNet.calc_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.hopfieldnet.HopfieldNet.calc_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the energy of the Hopfield network using the specified energy function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The energy of the network. A 1D tensor of shape (batch_size,).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.models.hopfieldnet.HopfieldNet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>steps=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/hopfieldnet.html#HopfieldNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.hopfieldnet.HopfieldNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs multiple steps of the Hopfield network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The initial state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
+steps (int): The number of steps to perform. If None, uses the number of steps specified in the constructor.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The final state of the network after the specified number of steps. A 2D tensor of shape (batch_size, N).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.models.hopfieldnet.HopfieldNet.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>x</em>, <em>step_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/hopfieldnet.html#HopfieldNet.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.hopfieldnet.HopfieldNet.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs one step of the Hopfield network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
+step_i (int): The current step number. Used for stochastic activation functions.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The new state of the network after one step. A 2D tensor of shape (batch_size, N).</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hopnet.models.hopfieldnet.HopfieldNet.weight_sym_upper">
+<code class="descname">weight_sym_upper</code><a class="headerlink" href="#hopnet.models.hopfieldnet.HopfieldNet.weight_sym_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to ensure symmetry. This uses the upper triangular part of the weight matrix and reflects it to the lower triangular part, leaving the diagonal as 0.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>torch.Tensor: A symmetric wieght matrix formulated from the upper triangular part of the weight matrix (excluding the diagonal).</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.models.pchnet">
+<span id="hopnet-models-pchnet-module"></span><h2>hopnet.models.pchnet module<a class="headerlink" href="#module-hopnet.models.pchnet" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.models.pchnet.PCHNet">
+<em class="property">class </em><code class="descclassname">hopnet.models.pchnet.</code><code class="descname">PCHNet</code><span class="sig-paren">(</span><em>size: int</em>, <em>energy_fn: hopnet.energies.Energy</em>, <em>actv_fn: hopnet.activations.Activation</em>, <em>bias=False</em>, <em>steps=10</em>, <em>eta=1.0</em>, <em>mu=1.0</em>, <em>pred_actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnet.html#PCHNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnet.PCHNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
+<p>Inpired by Predictive Coding, this architecture realises the error energy directly in its computation.
+The model introduces error neurons which capture the systems discrepancy between the current state and the next state.
+Error neurons have a one-to-one relationship with the state neurons.
+As in HopfieldNet(), the weights are symmetric and there are no self connections, both of which are enforced by usage of the weight_sym_upper property.
+While any activation function can be used, baring Tanh, the user is suggested to use the Error energy function.
+The network cannot be trained using the train_hopfield function, and trains best using the ‘energy’ or ‘reconstruction_err’ training modes.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>size (int): The number of neurons in the network.
+energy_fn (Energy): The energy function to use.
+actv_fn (Activation): The activation function to use.
+bias (bool): Whether or not to use a bias vector.
+steps (int): The number of steps to perform when forward is called.
+eta (float): The decay rate of the state neurons.
+mu (float): The learning rate of the state neurons, using the error signal.
+pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.</dd>
+</dl>
+<dl class="method">
+<dt id="hopnet.models.pchnet.PCHNet.calc_energy">
+<code class="descname">calc_energy</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnet.html#PCHNet.calc_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnet.PCHNet.calc_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>”
+Calculates the energy of the network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The energy of the network. A 1d tensor of shape (batch_size,).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.models.pchnet.PCHNet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>steps=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnet.html#PCHNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnet.PCHNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs multiple steps of the network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
+steps (int): The number of steps to perform. If None, the default number of steps is used.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.models.pchnet.PCHNet.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>x</em>, <em>step_i</em>, <em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnet.html#PCHNet.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnet.PCHNet.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs one step of network. The network first calculates a prediction of the next state using the standard Hopfield update rule.
+This prediction is compared against the current state of the network to calculate the error signal. 
+The error signal is then used to update the state of the network towards the prediction.
+This update is performed using the decay rate eta and the learning rate mu.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
+step_i (int): The current step of the network, used in the stochastic activation function.
+actv_fn (Activation): The activation function to use. If None, the default activation function is used.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).
+torch.Tensor: The error tensor. A 2d tensor of shape (batch_size, size).</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hopnet.models.pchnet.PCHNet.weight_sym_upper">
+<code class="descname">weight_sym_upper</code><a class="headerlink" href="#hopnet.models.pchnet.PCHNet.weight_sym_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to ensure symmetry. This uses the upper triangular part of the weight matrix and reflects it to the lower triangular part, leaving the diagonal as 0.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>torch.Tensor: A symmetric wieght matrix formulated from the upper triangular part of the weight matrix (excluding the diagonal).</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.models.pchnetV2">
+<span id="hopnet-models-pchnetv2-module"></span><h2>hopnet.models.pchnetV2 module<a class="headerlink" href="#module-hopnet.models.pchnetV2" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.models.pchnetV2.PCHNetV2">
+<em class="property">class </em><code class="descclassname">hopnet.models.pchnetV2.</code><code class="descname">PCHNetV2</code><span class="sig-paren">(</span><em>size: int</em>, <em>energy_fn: hopnet.energies.Energy</em>, <em>actv_fn: hopnet.activations.Activation</em>, <em>bias=False</em>, <em>steps=10</em>, <em>eta=1.0</em>, <em>mu=1.0</em>, <em>pred_actv_fn=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>symmetric=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
+<p>This model adds a second set of weights and biases to PCHNet, however no extra error neurons are added.
+The new weights are used to propagate the error signal in its update step. 
+This allows error neurons to affect all other neurons in the network, not just their corresponding state neurons.
+As the new weights are used after the error signal is calculated, the network cannot be trained using the ‘energy’ training mode.
+Instead, the ‘reconstruction_err’ must be used inorder to propagate gradients to all weights in the network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>size (int): The number of neurons in the network.
+energy_fn (Energy): The energy function to use.
+actv_fn (Activation): The activation function to use.
+bias (bool): Whether or not to use a bias vector.
+steps (int): The number of steps to perform when forward is called.
+eta (float): The decay rate of the state neurons.
+mu (float): The learning rate of the state neurons, using the error signal.
+pred_actv_fn (Activation): The activation function applied to the error signal. None is suitable, though torch.tanh is acceptable.
+symmetric (bool): Whether or not to enforce symmetry on the weights.</dd>
+</dl>
+<dl class="method">
+<dt id="hopnet.models.pchnetV2.PCHNetV2.calc_energy">
+<code class="descname">calc_energy</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2.calc_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2.calc_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the energy of the network for the given state.
+Two steps are performed to allow the second set of weights to be used in the calculation.
+The energy before the network has converged should not be compared to that of PCHNet as its takes more steps to calculate the energy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The state of the network. Must be a 2d tensor of shape (batch_size, size).</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The energy of the network. A 1d tensor of shape (batch_size,).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.models.pchnetV2.PCHNetV2.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>steps=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a forward pass of the network. The network is iterated for the specified number of steps, or the default number of steps if none is specified.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The initial state of the network. Must be a 2d tensor of shape (batch_size, size).
+steps (int): The number of steps to perform. If None, the default number of steps is used.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The final state of the network. A 2d tensor of shape (batch_size, size).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hopnet.models.pchnetV2.PCHNetV2.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>x</em>, <em>step_i</em>, <em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/models/pchnetV2.html#PCHNetV2.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a single step of the network. The network first calculates a prediction of the next state using the standard hopfield update rule.
+This prediction is compared against the current state of the network to calculate the error signal. 
+The error signal is then propagated through the second set of weights and biases to calculate the update to the state neurons.
+The state neurons are then updated using the update rule using a decay rate eta and learning rate mu.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2d tensor of shape (batch_size, size).
+step_i (int): The current step of the network. Used in the stochastic activation function.
+actv_fn (Activation): The activation function to use. If None, the default activation function is used.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The new state of the network. A 2d tensor of shape (batch_size, size).
+torch.Tensor: The error signal of the network. A 2d tensor of shape (batch_size, size).</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hopnet.models.pchnetV2.PCHNetV2.weight_sym_upper">
+<code class="descname">weight_sym_upper</code><a class="headerlink" href="#hopnet.models.pchnetV2.PCHNetV2.weight_sym_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to ensure symmetry. This uses the upper triangular part of the weight matrix and reflects it to the lower triangular part, leaving the diagonal as 0.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>torch.Tensor: A symmetric wieght matrix formulated from the upper triangular part of the weight matrix (excluding the diagonal).</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hopnet.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hopnet.energies.html" class="btn btn-neutral float-left" title="hopnet.energies package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hopnet.utils.html" class="btn btn-neutral float-right" title="hopnet.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joe Griffith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

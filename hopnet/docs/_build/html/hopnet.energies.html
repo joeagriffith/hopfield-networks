@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hopnet.energies package &mdash; hopfield-networks 1.0.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hopnet.models package" href="hopnet.models.html" />
+    <link rel="prev" title="hopnet.activations package" href="hopnet.activations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hopfield-networks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">hopnet</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="hopnet.html">hopnet package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="hopnet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="hopnet.activations.html">hopnet.activations package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">hopnet.energies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.models.html">hopnet.models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hopnet.utils.html">hopnet.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hopnet.html#module-hopnet">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hopfield-networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">hopnet</a></li>
+          <li class="breadcrumb-item"><a href="hopnet.html">hopnet package</a></li>
+      <li class="breadcrumb-item active">hopnet.energies package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hopnet.energies.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="hopnet-energies-package">
+<h1>hopnet.energies package<a class="headerlink" href="#hopnet-energies-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hopnet.energies.error">
+<span id="hopnet-energies-error-module"></span><h2>hopnet.energies.error module<a class="headerlink" href="#module-hopnet.energies.error" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.energies.error.ErrorEnergy">
+<em class="property">class </em><code class="descclassname">hopnet.energies.error.</code><code class="descname">ErrorEnergy</code><span class="sig-paren">(</span><em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/energies/error.html#ErrorEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.error.ErrorEnergy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hopnet.energies.Energy" title="hopnet.energies.Energy"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.energies.Energy</span></code></a></p>
+<p>Inspired by Predictive Coding, the energy function allows for the problem to be reformulated as an energy minimization problem.
+As the error is squared, the energy function is convex and is lower bounded by 0.
+The energy is defined as the mean squared error between the current state and the next state of the network.
+The network will be stable if it is in low energy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>actv_fn (Activation): The activation function to apply to the next state of the network.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.energies.error.error_energy">
+<code class="descclassname">hopnet.energies.error.</code><code class="descname">error_energy</code><span class="sig-paren">(</span><em>x</em>, <em>weight</em>, <em>bias=None</em>, <em>actv_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/energies/error.html#error_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.error.error_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>The error energy function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
+weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).
+bias (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).
+actv_fn (Activation): The activation function to apply to the next state of the network.</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.energies.lyapunov">
+<span id="hopnet-energies-lyapunov-module"></span><h2>hopnet.energies.lyapunov module<a class="headerlink" href="#module-hopnet.energies.lyapunov" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.energies.lyapunov.LyapunovEnergy">
+<em class="property">class </em><code class="descclassname">hopnet.energies.lyapunov.</code><code class="descname">LyapunovEnergy</code><a class="reference internal" href="_modules/hopnet/energies/lyapunov.html#LyapunovEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.lyapunov.LyapunovEnergy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hopnet.energies.Energy" title="hopnet.energies.Energy"><code class="xref py py-class docutils literal notranslate"><span class="pre">hopnet.energies.Energy</span></code></a></p>
+<p>This is the standard energy function used in Hopfield networks.
+While not known as the Lyapunov energy, it is a Lypunov function, which is why it has this name.
+This function cannot be used with the “energy” training mode as it is not lower bounded 
+and will cause the weights to explode in the negative direction.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hopnet.energies.lyapunov.lyapunov_energy">
+<code class="descclassname">hopnet.energies.lyapunov.</code><code class="descname">lyapunov_energy</code><span class="sig-paren">(</span><em>x</em>, <em>weight</em>, <em>b=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hopnet/energies/lyapunov.html#lyapunov_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.lyapunov.lyapunov_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>The standard Hopfield energy function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x (torch.Tensor): The current state of the network. Must be a 2D tensor (batch_size, N) where N is the number of neurons in the network.
+weight (torch.Tensor): The weight matrix of the network. Must be a 2D tensor (N, N).
+b (torch.Tensor): The bias vector of the network. If None, no bias is applied. If not None, must be a 1D tensor (N).</dd>
+<dt>Returns:</dt>
+<dd>torch.Tensor: The energy of the network in its current state. A 1D tensor of length batch_size.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hopnet.energies">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hopnet.energies" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hopnet.energies.Energy">
+<em class="property">class </em><code class="descclassname">hopnet.energies.</code><code class="descname">Energy</code><a class="reference internal" href="_modules/hopnet/energies.html#Energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hopnet.energies.Energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class for energy functions, inherit from this class to create a new activation function</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hopnet.activations.html" class="btn btn-neutral float-left" title="hopnet.activations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hopnet.models.html" class="btn btn-neutral float-right" title="hopnet.models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joe Griffith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
