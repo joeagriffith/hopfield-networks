@@ -11,11 +11,13 @@ It allows for different activation functions, energy functions, network architec
 The package is written in Python and relies mostly on PyTorch for its computation.
 
 ## Installation
-The 'hopnet' package only depends on PyTorch and tqdm. 
+The 'hopnet' package only depends on PyTorch, Torchvision, tkinter and tqdm. 
 
-Pytorch should be installed by following the information on their website at: https://pytorch.org/get-started/locally/
+Pytorch and Torchvision should be installed by following the information on their website at: https://pytorch.org/get-started/locally/
 
 Tqdm can be installed simply as 'pip install tqdm'.
+
+tkinter can be installed using 'pip install tkinter'.
 
 If the aforementioned dependencies are installed, you should be able to clone the repository and run the 'mnist_discrete' notebook yourself.
 
