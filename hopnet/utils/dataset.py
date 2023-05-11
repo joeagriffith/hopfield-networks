@@ -7,6 +7,16 @@ import os
 from PIL import Image
 
 def remove_to_tensor(transform):
+    """
+    Removes the ToTensor transform from a torchvision.transforms.Compose object.
+    Useful for when you want to apply a transform to a dataset, but the data is already a tensor.
+
+    Args:
+        transform (torchvision.transforms.Compose): The transform to remove the ToTensor transform from.
+
+    Returns:
+        torchvision.transforms.Compose: The transform with the ToTensor transform removed.
+    """
     if type(transform) == transforms.ToTensor:
         transform = None
 
@@ -18,10 +28,18 @@ def remove_to_tensor(transform):
         transform = transforms.Compose(new_transforms)
     return transform
 
-"""
-Dataset class that preloades all data into memory.
-"""
 class PreloadedDataset(Dataset):
+    """
+    Dataset class that preloades all data onto the specified device.
+    This prevents having to move batches of data to the device at each iteration of training.
+
+    Args:
+        main_dir (str): The path to the directory containing the data.
+        shape (tuple): The shape of an example datum.
+        transform (torchvision.transforms.Compose): The transform to apply to the data.
+        device (str): The device to load the data onto.
+        shuffle (bool): Whether to shuffle the data.
+    """
     def __init__(self, main_dir, shape, transform=None, device="cpu", shuffle=False):
         self.main_dir = main_dir
         self.shape = shape
@@ -67,8 +85,18 @@ class PreloadedDataset(Dataset):
         if shuffle:
             self._shuffle()
         
-    #  Useful for loading data which is stored in a different format to TinyImageNet30
     def from_dataset(dataset, transform, device="cpu"):
+        """
+        Converts a dataset from torchvision.datasets to a PreloadedDataset. 
+
+        Args:
+            dataset (torchvision.datasets): The dataset to convert.
+            transform (torchvision.transforms.Compose): The transform to apply to the data.
+            device (str): The device to load the data onto.
+
+        Returns:
+            PreloadedDataset: The converted dataset.
+        """
         preloaded_dataset = PreloadedDataset(None, dataset.__getitem__(0)[0].shape)
         data = []
         targets = []
@@ -95,8 +123,17 @@ class PreloadedDataset(Dataset):
         return preloaded_dataset
               
             
-    #  Transforms the data in batches so as not to overload memory
     def apply_transform(self, device=None, batch_size=500):
+        """
+        Applies a transform to the data in batches so as not to overload memory.
+
+        Args:
+            device (str): The device to load the data onto.
+            batch_size (int): The size of each batch.
+
+        Returns:
+            None
+        """
         if self.transform is not None:
             if device is None:
                 device = self.device
@@ -111,18 +148,32 @@ class PreloadedDataset(Dataset):
                 high += batch_size
         
         
-    #  Now a man who needs no introduction
     def __len__(self):
+        """
+        Now a man who needs no introduction.
+        """
         return len(self.images)
     
     
-    #  Returns images which have already been transformed - unless self.transform is none
-    #  This saves us from transforming individual images, which is very slow.
     def __getitem__(self, idx):
+        """
+        Returns images which have already been transformed - unless self.transform is none
+        This saves us from transforming individual images, which is very slow.
+
+        Args:
+            idx (int): The index of the image to return.
+
+        Returns:
+            torch.Tensor: The data at the given index.
+            torch.Tensor: The target of the data at the given index.
+        """
         return self.transformed_images[idx], self.targets[idx]        
     
     
     def _shuffle(self):
+        """
+        Shuffles the data and targets together in the dataset.
+        """
         indices = torch.randperm(self.images.shape[0])
         self.images = self.images[indices]
         self.targets = self.targets[indices]
@@ -131,9 +182,21 @@ class PreloadedDataset(Dataset):
             self.shuffled = True  
     
 
-    #  Returns a training and validation dataset, split with an equal number of each class.
-    #  a val_idx from 0 -> 1/val_ratio determines which segment of each class is used for validation.
     def cross_val_split_by_class(self, val_ratio, val_idx, val_transform=None, device="cpu"):
+        """
+        Returns a training and validation dataset, split with an equal number of each class.
+        a val_idx from 0 -> 1/val_ratio determines which segment of each class is used for validation.
+
+        Args:
+            val_ratio (float): The ratio of validation data to training data.
+            val_idx (int): The index of the validation segment to use.
+            val_transform (torchvision.transforms.Compose): The transform to apply to the validation data.
+            device (str): The device to load the data onto.
+
+        Returns:
+            PreloadedDataset: The training dataset.
+            PreloadedDataset: The validation dataset.
+        """
         assert not self.shuffled, "Dataset must not be shuffled to split by class"
         max_idx = int(1/val_ratio) - 1
         assert val_idx >= 0 and val_idx <= max_idx, f"Invalid val_idx: {val_idx} for ratio: {val_ratio}"

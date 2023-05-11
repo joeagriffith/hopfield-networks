@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
-# Abstract base class for activation functions, inherit from this class to create a new activation function
 class Activation(ABC):
+    """
+    Abstract base class for activation functions, inherit from this class to create a new activation function
+    """
     @abstractmethod
     def __call__(self, x, step_i):
         pass

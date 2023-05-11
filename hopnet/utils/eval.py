@@ -6,7 +6,18 @@ from torch.utils.data import DataLoader
 
 
 def topk_accuracy(output, target, topk=(1,)):
-    """Computes the precision@k for the specified values of k"""
+    """
+    Computes the precision for the specified values of k
+    
+    Args:
+        output (torch.Tensor): The output tensor.
+        target (torch.Tensor): The target tensor.
+        topk (tuple): The values of k to compute the precision for.
+
+    Returns:
+        torch.Tensor: The precision for the specified values of k.
+    """
+
     with torch.no_grad():
         device = "cuda" if output.is_cuda else "cpu"
         maxk = max(topk)
@@ -22,9 +33,28 @@ def topk_accuracy(output, target, topk=(1,)):
         return res
 
 
-# Returns the percentage of pixels that are different between the output and the raw input
-# Score is a mean across all noising functions
 def evaluate(model, data_loader, device, flatten=False, width=0.2):
+    """
+    Returns the percentage of pixels that are different between the output and the raw input>
+    Score is a mean across 5 noising functions.
+    Noising functions are:
+        - Masking the center column
+        - Masking the center row
+        - Masking the center row and column
+        - Downsampling and upsampling
+        - Adding salt and pepper noise
+
+    Args:
+        model (torch.nn.Module): The model to evaluate.
+        data_loader (torch.utils.data.DataLoader): The data loader to use.
+        device (str): The device to use.
+        flatten (bool): Whether or not to flatten the input.
+        width (float): The width of the mask to use.
+
+    Returns:
+        float: The percentage of pixels that are different between the output and the raw input.
+    """
+
     with torch.no_grad():
         model.eval()
         
@@ -51,8 +81,27 @@ def evaluate(model, data_loader, device, flatten=False, width=0.2):
         
         return total_loss/len(data_loader)
 
-# Alternative measure of loss, not scaled the same as the above and uses less noising functions
 def evaluate_mask(model, dataloader, batch_size, width=0.2, loss_fn=F.l1_loss, flatten=False, device=torch.device("cpu")):
+    """
+    Alternative measure of loss, not scaled the same as the above and uses less noising functions.
+    Noising functions are:
+        - Masking the center column
+        - Masking the center row
+        - Masking the center row and column
+
+    Args:
+        model (torch.nn.Module): The model to evaluate.
+        dataloader (torch.utils.data.DataLoader): The data loader to use.
+        batch_size (int): The batch size to use.
+        width (float): The width of the mask to use.
+        loss_fn (torch.nn.Module): The loss function to use.
+        flatten (bool): Whether or not to flatten the input.
+        device (str): The device to use.
+
+    Returns:
+        float: The loss. Not scaled the same as in evaluate().
+
+    """
     model.eval()
     total_loss = 0.0
     n = 0
