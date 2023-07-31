@@ -90,6 +90,20 @@ def mask_center_row(image, width):
     image[:, :, image.shape[2] // 2 - int(image.shape[2] * width) // 2 : image.shape[2] // 2 + int(image.shape[2] * width) // 2, :] = -1.0
     return image
 
+def mask_lower_half(image):
+    """
+    Sets the lower half of the image to -1.0.
+
+    Args:
+        |  image (torch.Tensor): The input tensor.
+
+    Returns:
+        torch.Tensor: The output tensor.
+    """
+    image = image.clone()
+    image[:, :, image.shape[2] // 2 :, :] = -1.0
+    return image
+
 def add_gaussian_noise(image, mean=0.0, std=0.001):
     """
     |  Adds Gaussian noise to the input image.

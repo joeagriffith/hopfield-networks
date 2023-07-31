@@ -107,6 +107,7 @@ def train_iterative(
     untrain_loss_fn=F.l1_loss,
     untrain_const=0.5,
     eval_loss_every=None,
+    eval_recon_loss_every=None,
     device="cpu",
     plot=False,
 ):
@@ -136,18 +137,21 @@ def train_iterative(
         |  untrain_after (int): The number of epochs to train for before untraining the model. If None, the model will not be untrained.
         |  untrain_loss_fn (torch.nn.Module): The loss function to use for untraining.
         |  eval_loss_every (int): The number of epochs to train for before evaluating the loss. If None, the loss will not be evaluated.
+        |  eval_recon_loss_every (int): The number of epochs to train for before evaluating the reconstruction loss. If None, the reconstruction loss will not be evaluated.
         |  device (str): The device to use.
         |  plot (bool): Whether to plot the training loss using TensorBoard.
 
     Returns:
         |  train_loss (list): The training loss for each epoch.
         |  train_energy (list): The training energy for each epoch.
+        |  train_recon_loss (list): The training reconstruction loss for each epoch.
         |  step (int): The current step of the training procedure.
 
     """
     if plot:
         writer = SummaryWriter(f"{log_dir}/{model_name}")
     train_loss = []
+    train_recon_loss = []
     train_energy = []
     
     best_train_loss = float("inf")
@@ -170,6 +174,7 @@ def train_iterative(
                 loop.set_postfix(
                     train_energy = train_energy[-1],
                     train_loss = train_loss[-1], 
+                    train_recon_loss = train_recon_loss[-1],
                 )
 
             x = images.to(device)
@@ -224,7 +229,8 @@ def train_iterative(
             elif mode == 'reconstruction_err':
                 assert type(model) == PCHNet or type(model) == PCHNetV2, "step_err mode only works with PCHNet"
 
-                out, e = model.step(x, 0, actv_fn=Tanh(0.1)) # Using Tanh to allow gradients to flow through
+                # out, e = model.step(x, 0, actv_fn=Tanh(0.1)) # Using Tanh to allow gradients to flow through
+                out = model(x) # Using Tanh to allow gradients to flow through
                 loss = criterion(out, x)
                 loss.backward()
             
@@ -264,10 +270,20 @@ def train_iterative(
                             best_train_loss = train_loss[-1]
                     model.train()
 
+        if eval_recon_loss_every is not None:
+            if epoch == 0 or (epoch+1) % eval_recon_loss_every == 0:
+                with torch.no_grad():
+                    out = model(x)
+                    train_recon_loss.append(criterion(out, x))
+
+
         step += n
         if plot:
-            writer.add_scalar("Training Loss", train_loss[-1], step)
             writer.add_scalar("Training Energy", train_energy[-1], step)
+            if eval_loss_every is not None:
+                writer.add_scalar("Training Loss", train_loss[-1], step)
+            if eval_recon_loss_every is not None:
+                writer.add_scalar("Training Reconstruction Loss", train_recon_loss[-1], step)
         
     print(f"Best train loss: {best_train_loss}")
-    return torch.tensor(train_energy), torch.tensor(train_loss), step
+    return torch.tensor(train_energy), torch.tensor(train_loss), torch.tensor(train_recon_loss), step

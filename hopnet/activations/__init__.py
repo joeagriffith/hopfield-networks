@@ -12,3 +12,4 @@ from hopnet.activations.hopfield import HopfieldActivation, hopfield_activation
 from hopnet.activations.stochastic import StochasticHopfieldActivation, stochastic_hopfield_activation
 from hopnet.activations.tanh import Tanh, tanh
 from hopnet.activations.identity import Identity, identity
+from hopnet.activations.noisy_tanh import NoisyTanh, noisy_tanh

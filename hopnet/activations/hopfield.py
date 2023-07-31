@@ -31,7 +31,7 @@ class HopfieldActivation(Activation):
         """
         return hopfield_activation(x, self.prefer)
 
-def hopfield_activation(x: torch.Tensor, prefer:int):
+def hopfield_activation(x: torch.Tensor, prefer:int, threshold:float=0.0):
     """
     The functional version of the Hopfield activation function.
 
